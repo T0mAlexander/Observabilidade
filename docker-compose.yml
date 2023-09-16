@@ -1,0 +1,18 @@
+services:
+  database:
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL_USERNAME=golang
+      - POSTGRESQL_PASSWORD=golang
+      - POSTGRESQL_DATABASE=postgresql
+    volumes:
+      - ./database/products.sql:/docker-entrypoint-initdb.d/products.sql
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml

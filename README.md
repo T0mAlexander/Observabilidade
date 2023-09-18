@@ -8,31 +8,35 @@ Este repositório demonstra um exemplo de uso do Prometheus para observabilidade
 
 - **[Docker](https://docs.docker.com/get-docker/)** instalado na máquina com versão mínima em 24.0.x
 - **[Golang](https://go.dev/dl/)** instalado na máquina com versão mínima em 1.21.x
+- **[Prometheus](https://prometheus.io/download/)** instalado na máquina 2.47.x *(opcional)*
+- **[Grafana](https://grafana.com/grafana/download?pg=get&plcmt=selfmanaged-box1-cta1)** instalado na máquina 10.x.x *(opcional)*
 
 ## Instruções de uso
 
-1. Clone o repositório
-
-```bash
-git clone -b go-store https://github.com/T0mAlexander/Go-Alura
-```
-
-2. Navegue até o diretório
-
-```bash
-cd Go-Alura
-```
-
-3. Construa e inicialize o container do Docker em sua máquina a partir do arquivo `docker-compose.yml`
+### 1. Suba os containers
 
 ```bash
 docker-compose up -d
 ```
 
-4. Compile e instancie o servidor
+**Lembrete:** as ferramentas estarão disponíveis nos seguintes endereços abaixo:
 
-```bash
-go run main.go
+> **Aplicação**: [localhost:3333](http://localhost:3333)
+<br>
+> **Prometheus UI**: [localhost:9090](http://localhost:9090)
+<br>
+> **Grafana**: [localhost:3000](http://localhost:3000)
+
+### 2. Execute a seguinte expressão no Prometheus UI
+
+```text
+prometheus_http_requests_total
 ```
 
-> Nota: a aplicação será executada no endereço [localhost:3333](http://localhost:3333)
+> **Dica:** você pode trocar para tabela *Graph* para visualizar gráficos
+
+  ![gráficos](./screenshots/graficos.png)
+
+### 3. Navegue até ***Status > Targets*** e verifique o status das aplicações
+
+  ![targets](./screenshots/targets.png)

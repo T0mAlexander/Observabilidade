@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+	"go-store/metrics"
 	"go-store/routes"
+	"log"
 	"net/http"
 )
 
-var serverPort = ":3333"
+const serverPort = ":3333"
 
 func main() {
+	metrics.Prometheus()
 	routes.Routes()
 	fmt.Printf("Aplicação disponível no endereço http://localhost%s\n", serverPort)
-	http.ListenAndServe(serverPort, nil)
+	log.Fatal(http.ListenAndServe(serverPort, nil))
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func DatabaseConnection() *sql.DB {
-	connection := "user=golang dbname=postgresql password=golang host=localhost sslmode=disable"
+	connection := "user=golang dbname=postgresql password=golang host=172.0.0.20 sslmode=disable"
 
 	database, error := sql.Open("postgres", connection)
 

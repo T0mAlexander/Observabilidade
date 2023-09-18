@@ -8,6 +8,8 @@ services:
     networks:
       metrics:
         ipv4_address: 172.0.0.10
+    depends_on:
+      - database
 
   database:
     image: bitnami/postgresql

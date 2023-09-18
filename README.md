@@ -1,4 +1,4 @@
-# Prometheus e Go
+# Prometheus, Grafana e Go
 
 ## Descrição
 

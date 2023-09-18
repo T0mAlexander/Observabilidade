@@ -1,4 +1,14 @@
+version: '3.8'
+
 services:
+  app:
+    build: .
+    ports:
+      - 3333:3333
+    networks:
+      metrics:
+        ipv4_address: 172.0.0.10
+
   database:
     image: bitnami/postgresql
     ports:
@@ -8,7 +18,10 @@ services:
       - POSTGRESQL_PASSWORD=golang
       - POSTGRESQL_DATABASE=postgresql
     volumes:
-      - ./database/products.sql:/docker-entrypoint-initdb.d/products.sql
+      - ./app/database/products.sql:/docker-entrypoint-initdb.d/products.sql
+    networks:
+      metrics:
+        ipv4_address: 172.0.0.20
 
   prometheus:
     image: prom/prometheus
@@ -16,3 +29,21 @@ services:
       - 9090:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      metrics:
+        ipv4_address: 172.0.0.30
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    networks:
+      metrics:
+        ipv4_address: 172.0.0.40
+
+networks:
+  metrics:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.0.0.0/24

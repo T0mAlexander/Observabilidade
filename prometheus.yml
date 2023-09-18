@@ -4,16 +4,22 @@ global:
   # Anexe estas etiquetas a qualquer série temporal ou alertas ao se comunicar com
   # sistemas externos (federação, armazenamento remoto, Alertmanager).
   external_labels:
-    monitor: 'codelab-monitor'
+    monitor: "codelab-monitor"
 
 # Uma configuração de coleta contendo exatamente um ponto de extremidade a ser coletado:
 # Aqui, é o próprio Prometheus.
 scrape_configs:
   # O nome da tarefa é adicionado como uma etiqueta `job=<job_name>` a qualquer série temporal coletada desta configuração.
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
 
     # Substitui o padrão global e coleta alvos desta tarefa a cada 5 segundos.
     scrape_interval: 5s
 
     static_configs:
-      - targets: ['localhost:3333'] # Endereço da aplicação
+      - targets: 
+        - localhost:9090 # Endereço da aplicação
+
+  - job_name: app
+    static_configs:
+      - targets:
+          - 172.0.0.10:3333

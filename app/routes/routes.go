@@ -2,7 +2,7 @@ package routes
 
 import (
 	"go-store/controllers"
-	metrics "go-store/utils"
+	"go-store/metrics"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"

@@ -20,7 +20,7 @@ services:
       - POSTGRESQL_PASSWORD=golang
       - POSTGRESQL_DATABASE=postgresql
     volumes:
-      - ./app/database/products.sql:/docker-entrypoint-initdb.d/products.sql
+      - ./products.sql:/docker-entrypoint-initdb.d/products.sql
     networks:
       metrics:
         ipv4_address: 172.0.0.20

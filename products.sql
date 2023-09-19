@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS products (
   id SERIAL PRIMARY KEY,
-  amount INT NOT NULL,
-  name VARCHAR NOT NULL,
+  name VARCHAR,
+  price DECIMAL,
   description VARCHAR,
-  PRICE FLOAT NOT NULL
+  amount INTEGER
 )

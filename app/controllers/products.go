@@ -13,7 +13,11 @@ var temp = template.Must(template.ParseGlob("./templates/*.html"))
 func Index(write http.ResponseWriter, request *http.Request) {
 	allProducts := models.FindAllProducts()
 
-	temp.ExecuteTemplate(write, "Index", allProducts)
+	error := temp.ExecuteTemplate(write, "Index", allProducts)
+
+	if error != nil {
+		log.Fatalln(error)
+	}
 }
 
 func Product(write http.ResponseWriter, request *http.Request) {

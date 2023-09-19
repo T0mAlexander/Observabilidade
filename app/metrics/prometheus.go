@@ -11,7 +11,6 @@ import (
 
 type Metrics struct {
 	CpuTemperature prometheus.Gauge
-	DiskFailures   *prometheus.CounterVec
 	Registerer     prometheus.Registerer
 }
 

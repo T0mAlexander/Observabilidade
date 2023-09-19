@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 15s # Por padrão, coleta alvos a cada 15 segundos.
+  scrape_interval: 5s # Por padrão, coleta alvos a cada 15 segundos.
 
   # Anexe estas etiquetas a qualquer série temporal ou alertas ao se comunicar com
   # sistemas externos (federação, armazenamento remoto, Alertmanager).

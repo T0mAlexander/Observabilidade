@@ -14,5 +14,5 @@ func main() {
 	metrics.Data()
 	routes.Routes()
 	fmt.Printf("Aplicação disponível no endereço http://localhost%s\n", serverPort)
-	log.Fatal(http.ListenAndServe(serverPort, nil))
+	log.Fatalln(http.ListenAndServe(serverPort, nil))
 }

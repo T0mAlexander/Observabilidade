@@ -40,3 +40,39 @@ prometheus_http_requests_total
 ### 3. Navegue até ***Status > Targets*** e verifique o status das aplicações
 
   ![targets](./screenshots/targets.png)
+
+### 4. Acesse o painel do Grafana
+
+  ![painel do grafana](./screenshots/grafana.png)
+
+> **Dica:** o usuário e senha padrão é ***admin***
+
+### 5. Crie um medidor para temperatura da CPU
+
+  ![temperatura cpu](./screenshots/cpu-grafana.png)
+
+### 6. Importe painéis personalizados
+
+#### 6.1 Acesse o [marketplace](https://grafana.com/grafana/dashboards/) de painéis do Grafana
+
+  ![marketplace de paineis do grafana](./screenshots/marketplace-grafana.png)
+
+#### 6.2 Pesquise por linguagens ou ferramentas
+
+  ![paineis grafana para golang](./screenshots/paineis-golang.png)
+
+#### 6.3 Copie o ID do painel escolhido
+
+  ![copiando id do painel](./screenshots/id-painel.png)
+
+#### 6.4 Importe o painel para o Grafana
+
+  ![importando o painel para o grafana](./screenshots/importando-painel.png)
+
+#### 6.5 Cole o ID do painel para carregamento
+
+  ![carregando o painel](./screenshots/carregando-painel.png)
+
+  ![carregando o painel 2](./screenshots/carregando-painel-2.png)
+
+  ![painel carregado](./screenshots/painel-go.png)

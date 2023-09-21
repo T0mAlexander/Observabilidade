@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Este repositório demonstra um exemplo de uso do Prometheus para observabilidade de uma aplicação feita em Go
+Este repositório demonstra um exemplo de uso do Prometheus e Grafana para monitoramento usando uma aplicação exemplar feita em Go
 
 ## Pré-requisitos
 

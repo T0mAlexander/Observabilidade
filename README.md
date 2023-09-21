@@ -21,10 +21,8 @@ docker-compose up -d
 
 **Lembrete:** as ferramentas estarão disponíveis nos seguintes endereços abaixo:
 
-> **Aplicação**: [localhost:3333](http://localhost:3333)
-<br>
-> **Prometheus UI**: [localhost:9090](http://localhost:9090)
-<br>
+> **Aplicação**: [localhost:3333](http://localhost:3333) <br>
+> **Prometheus UI**: [localhost:9090](http://localhost:9090) <br>
 > **Grafana**: [localhost:3000](http://localhost:3000)
 
 ### 2. Execute a seguinte expressão no Prometheus UI

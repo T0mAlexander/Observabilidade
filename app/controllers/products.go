@@ -1,14 +1,18 @@
 package controllers
 
 import (
+	"go-store/metrics"
 	"go-store/models"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var temp = template.Must(template.ParseGlob("./templates/*.html"))
+var Metrics http.Handler = MetricsSource()
 
 func Index(write http.ResponseWriter, request *http.Request) {
 	allProducts := models.FindAllProducts()
@@ -85,6 +89,16 @@ func Update(write http.ResponseWriter, request *http.Request) {
 
 		models.UpdateProduct(convertedId, name, convertedPrice, description, convertedAmount)
 	}
-	
+
 	http.Redirect(write, request, "/", http.StatusMovedPermanently)
+}
+
+func MetricsSource() http.Handler {
+	return promhttp.HandlerFor(
+		metrics.Prometheus,
+		promhttp.HandlerOpts{
+			Registry:          metrics.Prometheus,
+			EnableOpenMetrics: true,
+		},
+	)
 }

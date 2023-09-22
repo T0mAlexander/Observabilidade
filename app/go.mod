@@ -1,4 +1,4 @@
-module go-store
+module app
 
 go 1.20
 

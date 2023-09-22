@@ -1,6 +1,6 @@
 package models
 
-import "go-store/database"
+import "app/database"
 
 type Product struct {
 	Id, Amount        int
@@ -42,8 +42,8 @@ func FindAllProducts() []Product {
 }
 
 func CreateProduct(name, description string, price float64, amount int) {
-  database := db.DatabaseConnection()
-	
+	database := db.DatabaseConnection()
+
 	newProduct, error := database.Prepare("insert into products(name, description, price, amount) values($1, $2, $3, $4)")
 	if error != nil {
 		panic(error.Error())
@@ -65,7 +65,7 @@ func DeleteProduct(id string) {
 	defer database.Close()
 }
 
-func EditProduct(id string) Product{
+func EditProduct(id string) Product {
 	database := db.DatabaseConnection()
 
 	product, error := db.DatabaseConnection().Query("select * from products where id=$1", id)

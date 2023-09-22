@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"go-store/controllers"
+	"app/controllers"
 	"net/http"
 )
 

@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"go-store/metrics"
-	"go-store/models"
+	"app/metrics"
+	"app/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -95,9 +95,9 @@ func Update(write http.ResponseWriter, request *http.Request) {
 
 func MetricsSource() http.Handler {
 	return promhttp.HandlerFor(
-		metrics.Prometheus,
+		metrics.Prom,
 		promhttp.HandlerOpts{
-			Registry:          metrics.Prometheus,
+			Registry:          metrics.Prom,
 			EnableOpenMetrics: true,
 		},
 	)

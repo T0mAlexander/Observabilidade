@@ -99,6 +99,9 @@ func MetricsSource() http.Handler {
 		promhttp.HandlerOpts{
 			Registry:          metrics.Prom,
 			EnableOpenMetrics: true,
+			ErrorLog: log.Default(),
+			DisableCompression: true,
+			ErrorHandling: promhttp.HTTPErrorOnError,
 		},
 	)
 }

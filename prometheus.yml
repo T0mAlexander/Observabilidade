@@ -22,4 +22,4 @@ scrape_configs:
   - job_name: app
     static_configs:
       - targets:
-          - 172.0.0.10:3333
+          - app:3333

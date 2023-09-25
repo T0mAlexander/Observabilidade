@@ -1,12 +1,14 @@
 package metrics
 
 import (
+	"app/routes/middleware"
+
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
 )
 
 type Metrics struct {
 	CpuTemperature prometheus.Gauge
+	RequestsTotal  prometheus.CounterVec
 }
 
 var Prom = prometheus.NewRegistry()
@@ -21,14 +23,8 @@ func Prometheus() *Metrics {
 	}
 
 	Prom.MustRegister(
-		collectors.NewGoCollector(),
-		collectors.NewProcessCollector(
-			collectors.ProcessCollectorOpts{
-				ReportErrors: true,
-			},
-		),
-
 		metrics.CpuTemperature,
+		middleware.RequestsTotal,
 	)
 
 	return metrics

@@ -19,6 +19,8 @@ Este repositório demonstra um exemplo de uso do Prometheus e Grafana para monit
 docker-compose up -d
 ```
 
+> **Dica:** caso queira testar localmente, troque o host do banco de dados e execute `go build`
+
 **Lembrete:** as ferramentas estarão disponíveis nos seguintes endereços abaixo:
 
 > **Aplicação**: [localhost:3333](http://localhost:3333) <br>

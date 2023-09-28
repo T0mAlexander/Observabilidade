@@ -3,8 +3,10 @@ package routes
 import (
 	"app/controllers"
 	"app/metrics"
-	"app/routes/middleware"
+	"log"
 	"net/http"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Routes() {
@@ -15,9 +17,14 @@ func Routes() {
 	http.HandleFunc("/edit", controllers.Edit)
 	http.HandleFunc("/update", controllers.Update)
 
-	http.Handle(
-		"/metrics", middleware.Prometheus(
-			metrics.Prom, nil).Middleware(
-			"/metrics", controllers.Metrics,
-		))
+	http.Handle("/metrics", promhttp.HandlerFor(
+		metrics.Prom,
+		promhttp.HandlerOpts{
+			Registry:           metrics.Prom,
+			EnableOpenMetrics:  true,
+			ErrorLog:           log.Default(),
+			DisableCompression: true,
+			ErrorHandling:      promhttp.HTTPErrorOnError,
+		},
+	))
 }

@@ -1,14 +1,13 @@
 package metrics
 
 import (
-	"app/routes/middleware"
+	"app/controllers"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
 
 type Metrics struct {
 	CpuTemperature prometheus.Gauge
-	RequestsTotal  prometheus.CounterVec
 }
 
 var Prom = prometheus.NewRegistry()
@@ -24,7 +23,7 @@ func Prometheus() *Metrics {
 
 	Prom.MustRegister(
 		metrics.CpuTemperature,
-		middleware.RequestsTotal,
+		controllers.RequestsTotal,
 	)
 
 	return metrics

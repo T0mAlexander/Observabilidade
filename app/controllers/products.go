@@ -14,7 +14,7 @@ var temp = template.Must(template.ParseGlob("./templates/*.html"))
 var RequestsTotal = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "http_requests_total",
-		Help: "Number of HTTP operations",
+		Help: "Total de requisições HTTP",
 	}, []string{"method", "route", "status"},
 )
 

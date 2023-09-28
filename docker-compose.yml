@@ -25,12 +25,24 @@ services:
       metrics:
         ipv4_address: 172.0.0.20
 
+  db_exporter:
+    image: bitnami/postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://golang:golang@database:5432/golang?schema=public
+    networks:
+      - metrics
+    depends_on:
+      - database
+
   prometheus:
     image: prom/prometheus
     ports:
       - 9090:9090
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       metrics:
         ipv4_address: 172.0.0.30
@@ -42,6 +54,21 @@ services:
     networks:
       metrics:
         ipv4_address: 172.0.0.40
+
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    networks:
+      metrics:
+        ipv4_address: 172.0.0.50
+    command: 
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --cluster.advertise-address=0.0.0.0:9093
+    depends_on:
+      - prometheus
 
 networks:
   metrics:

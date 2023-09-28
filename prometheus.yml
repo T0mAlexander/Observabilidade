@@ -6,11 +6,14 @@ global:
   external_labels:
     monitor: "codelab-monitor"
 
+rule_files:
+  - alert-rules.yml
+
 # Uma configuração de coleta contendo exatamente um ponto de extremidade a ser coletado:
 # Aqui, é o próprio Prometheus.
 scrape_configs:
   # O nome da tarefa é adicionado como uma etiqueta `job=<job_name>` a qualquer série temporal coletada desta configuração.
-  - job_name: "prometheus"
+  - job_name: prometheus
 
     # Substitui o padrão global e coleta alvos desta tarefa a cada 5 segundos.
     scrape_interval: 5s
@@ -23,3 +26,18 @@ scrape_configs:
     static_configs:
       - targets:
           - app:3333
+
+  - job_name: db_exporter
+    static_configs:
+      - targets:
+          - db_exporter:9187
+
+alerting:
+  alertmanagers:
+    - follow_redirects: true
+      scheme: http
+      timeout: 10s
+      api_version: v2
+      static_configs:
+        - targets:
+          - alertmanager:9093

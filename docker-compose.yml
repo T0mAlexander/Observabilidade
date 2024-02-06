@@ -1,4 +1,5 @@
 version: '3.8'
+name: observabilidade-go
 
 services:
   app:
@@ -25,8 +26,6 @@ services:
       - 9187:9187
     environment:
       - DATA_SOURCE_NAME=postgresql://golang:golang@database:5432/golang?schema=public
-    networks:
-      - metrics
     depends_on:
       - database
 

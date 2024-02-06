@@ -3,6 +3,7 @@ name: observabilidade-go
 
 services:
   app:
+    container_name: app
     build: .
     ports:
       - 3333:3333
@@ -10,6 +11,7 @@ services:
       - database
 
   database:
+    container_name: postgresql
     image: bitnami/postgresql
     ports:
       - 5432:5432
@@ -21,6 +23,7 @@ services:
       - ./products.sql:/docker-entrypoint-initdb.d/products.sql
 
   db_exporter:
+    container_name: pgsql-exporter
     image: bitnami/postgres-exporter
     ports:
       - 9187:9187
@@ -30,6 +33,7 @@ services:
       - database
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     ports:
       - 9090:9090
@@ -38,11 +42,13 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
+    container_name: grafana
     image: grafana/grafana
     ports:
       - 3000:3000
 
   alertmanager:
+    container_name: alert-manager
     image: prom/alertmanager
     ports:
       - 9093:9093

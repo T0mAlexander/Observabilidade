@@ -6,9 +6,6 @@ global:
   external_labels:
     monitor: "codelab-monitor"
 
-rule_files:
-  - alert-rules.yml
-
 # Uma configuração de coleta contendo exatamente um ponto de extremidade a ser coletado:
 # Aqui, é o próprio Prometheus.
 scrape_configs:
@@ -31,13 +28,3 @@ scrape_configs:
     static_configs:
       - targets:
           - db_exporter:9187
-
-alerting:
-  alertmanagers:
-    - follow_redirects: true
-      scheme: http
-      timeout: 10s
-      api_version: v2
-      static_configs:
-        - targets:
-          - alertmanager:9093

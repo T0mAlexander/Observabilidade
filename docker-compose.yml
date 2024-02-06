@@ -1,18 +1,28 @@
 version: '3.8'
+name: observabilidade
 
 services:
   app:
+    container_name: app
     build: .
+    
     ports:
       - 3333:3333
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.10
+    labels:
+      log: true
+      log_job: containerlogs
     depends_on:
       - database
 
+  nginx:
+    container_name: nginx
+    image: nginx:1.25.3-alpine
+    ports:
+      - 8080:80
+
   database:
-    image: bitnami/postgresql
+    container_name: postgresql
+    image: bitnami/postgresql:16
     ports:
       - 5432:5432
     environment:
@@ -21,58 +31,50 @@ services:
       - POSTGRESQL_DATABASE=postgresql
     volumes:
       - ./products.sql:/docker-entrypoint-initdb.d/products.sql
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.20
 
   db_exporter:
-    image: bitnami/postgres-exporter
+    container_name: pgsql-exporter
+    image: bitnami/postgres-exporter:0.15.0
     ports:
       - 9187:9187
     environment:
-      - DATA_SOURCE_NAME=postgresql://golang:golang@database:5432/golang?schema=public
-    networks:
-      - metrics
+      - DATA_SOURCE_NAME=postgresql://golang:golang@database:5432/golang?ssl=disable
     depends_on:
       - database
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     ports:
       - 9090:9090
     volumes:
-      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.30
+      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
-    image: grafana/grafana
+    container_name: grafana
+    image: grafana/grafana:10.2.3
     ports:
       - 3000:3000
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.40
-
-  alertmanager:
-    image: prom/alertmanager
-    ports:
-      - 9093:9093
     volumes:
-      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.50
-    command: 
-      - --config.file=/etc/alertmanager/alertmanager.yml
-      - --cluster.advertise-address=0.0.0.0:9093
-    depends_on:
-      - prometheus
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
 
-networks:
-  metrics:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.0.0.0/24
+  loki:
+    container_name: grafana-loki
+    image: grafana/loki:2.9.3
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/local-config.yml
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:2.9.3
+    volumes:
+      - ./config/promtail.yml:/etc/promtail/docker-config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: 
+      - -config.file=/etc/promtail/docker-config.yml
+      - -print-config-stderr=true
+    depends_on:
+      - loki

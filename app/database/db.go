@@ -8,7 +8,6 @@ import (
 
 func DatabaseConnection() *sql.DB {
 	connection := "user=golang dbname=postgresql password=golang host=database sslmode=disable"
-
 	database, error := sql.Open("postgres", connection)
 
 	if error != nil {

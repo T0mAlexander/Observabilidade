@@ -5,9 +5,6 @@ services:
     build: .
     ports:
       - 3333:3333
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.10
     depends_on:
       - database
 
@@ -21,9 +18,6 @@ services:
       - POSTGRESQL_DATABASE=postgresql
     volumes:
       - ./products.sql:/docker-entrypoint-initdb.d/products.sql
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.20
 
   db_exporter:
     image: bitnami/postgres-exporter
@@ -41,19 +35,13 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.30
+      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
     image: grafana/grafana
     ports:
       - 3000:3000
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.40
 
   alertmanager:
     image: prom/alertmanager
@@ -61,18 +49,8 @@ services:
       - 9093:9093
     volumes:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
-    networks:
-      metrics:
-        ipv4_address: 172.0.0.50
     command: 
       - --config.file=/etc/alertmanager/alertmanager.yml
       - --cluster.advertise-address=0.0.0.0:9093
     depends_on:
       - prometheus
-
-networks:
-  metrics:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.0.0.0/24

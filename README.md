@@ -115,7 +115,7 @@ Para um cenário mais complexo, usaremos estas aplicações em Spring Boot com o
 java -javaagent:localização/do/opentelemetry-agent.jar -jar [nome da aplicação].jar
 ```
 
-O agente suporta diversas [biblioteas](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/supported-libraries.md), incluindo o Spring Web MVC. Segundo o documento traduzido do inglês:
+O agente suporta diversas [bibliotecas](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/supported-libraries.md), incluindo o Spring Web MVC. Segundo o documento traduzido do inglês:
 
 > Pode ser usado para capturar dados de telemetria nos "limites" de uma aplicação ou serviço, tais como requisições de entrada, chamadas de saídas HTTP, chamadas ao banco de dados e muito mais
 

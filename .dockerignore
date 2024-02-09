@@ -1,0 +1,10 @@
+# Pastas
+.vscode/
+images/
+scripts/
+etc/
+
+# Arquivos
+Dockerfile
+.gitignore
+README.md

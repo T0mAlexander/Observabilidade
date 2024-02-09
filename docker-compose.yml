@@ -1,61 +1,135 @@
 version: '3.8'
-name: observabilidade-go
+name: java-observabilidade
+
+x-logging: &default-logging
+  driver: loki
+  options:
+    loki-url: http://localhost:3100/api/prom/push
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}.\d{3}) (?P<message>(?s:.*))$$'
 
 services:
-  app:
-    container_name: app
-    build: .
+  loki:
+    container_name: grafana-loki
+    image: grafana/loki:2.9.3
+    command: -config.file=/etc/loki/local-config.yaml
     ports:
-      - 3333:3333
-    depends_on:
-      - database
-
-  database:
-    container_name: postgresql
-    image: bitnami/postgresql
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRESQL_USERNAME=golang
-      - POSTGRESQL_PASSWORD=golang
-      - POSTGRESQL_DATABASE=postgresql
-    volumes:
-      - ./products.sql:/docker-entrypoint-initdb.d/products.sql
-
-  db_exporter:
-    container_name: pgsql-exporter
-    image: bitnami/postgres-exporter
-    ports:
-      - 9187:9187
-    environment:
-      - DATA_SOURCE_NAME=postgresql://golang:golang@database:5432/golang?schema=public
-    depends_on:
-      - database
+      - 3100:3100
 
   prometheus:
     container_name: prometheus
-    image: prom/prometheus
+    image: prom/prometheus:v2.49.1
     ports:
       - 9090:9090
     volumes:
-      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./etc/prometheus:/workspace
+    command:
+      - --config.file=/workspace/prometheus.yml
+      - --enable-feature=exemplar-storage
+    depends_on:
+      - loki
+    logging: *default-logging
+
+  tempo:
+    container_name: grafana-tempo
+    image: grafana/tempo:2.3.1
+    command: [ '--target=all', '--storage.trace.backend=local', '--storage.trace.local.path=/var/tempo', '--auth.enabled=false' ]
+    ports:
+      - 14250:14250
+      - 4317:4317
+    depends_on:
+      - loki
+    logging: *default-logging
 
   grafana:
     container_name: grafana
-    image: grafana/grafana
+    image: grafana/grafana:10.3.1
     ports:
       - 3000:3000
-
-  alertmanager:
-    container_name: alert-manager
-    image: prom/alertmanager
-    ports:
-      - 9093:9093
     volumes:
-      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
-    command: 
-      - --config.file=/etc/alertmanager/alertmanager.yml
-      - --cluster.advertise-address=0.0.0.0:9093
+      - ./etc/grafana/:/etc/grafana/provisioning/datasources
+      - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./etc/dashboards:/etc/grafana/dashboards
     depends_on:
+      - loki
       - prometheus
+    logging: *default-logging
+
+  # Aplicações
+  app-a:
+    container_name: app-a
+    build: ./app/
+    environment:
+      - TARGET_ONE_HOST=app-b
+      - TARGET_TWO_HOST=app-c
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # Envia rastreamentos ao Grafana Tempo
+      - OTEL_SERVICE_NAME=app-a # Nome do serviço para o Span
+      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-a # Atributo customizado para o Grafana Tempo e Loki
+      - OTEL_METRICS_EXPORTER=none # Desabilitado exportador de métricas
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-a # Sobrescrever o valor padrão de "management.metrics.tags.application" localizado em "app/src/main/resources/application.properties"
+    ports:
+      - 8080:8080
+    logging: *default-logging
+
+  app-b:
+    container_name: app-b
+    build: ./app/
+    environment:
+      - TARGET_ONE_HOST=app-b
+      - TARGET_TWO_HOST=app-c
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+      - OTEL_SERVICE_NAME=app-b
+      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-b
+      - OTEL_METRICS_EXPORTER=none
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-b
+    ports:
+      - 8081:8080
+    logging: *default-logging
+
+  app-c:
+    container_name: app-c
+    build: ./app/
+    environment:
+      - TARGET_ONE_HOST=app-b
+      - TARGET_TWO_HOST=app-c
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+      - OTEL_SERVICE_NAME=app-c
+      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-c
+      - OTEL_METRICS_EXPORTER=none
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-c
+    ports:
+      - 8082:8080
+    logging: *default-logging
+
+  postgres:
+    container_name: postgresql
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
+    logging: *default-logging
+
+  redis:
+    container_name: redis
+    image: redis:7.2.4
+    ports:
+      - 6379:6379
+    logging: *default-logging
+
+  # grafana-k6:
+    # container_name: grafana-k6
+    # image: grafana/k6:0.49.0
+    # volumes:
+      # - ./scripts/grafana-k6.js:/scripts/grafana-k6.js:ro
+    # command: run /scripts/grafana-k6.js
+    # depends_on:
+      # - app-a
+      # - app-b
+      # - app-c

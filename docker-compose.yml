@@ -61,7 +61,7 @@ services:
       - prometheus
     logging: *default-logging
 
-  node-cert-exporter:
+  cert-exporter:
     container_name: cert-exporter
     image: amimof/node-cert-exporter:v1.1.1
     ports: 

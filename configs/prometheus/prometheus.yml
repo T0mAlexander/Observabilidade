@@ -25,7 +25,7 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ["localhost:9090", "cert-exporter:9117"]
 
   - job_name: 'app-a'
 

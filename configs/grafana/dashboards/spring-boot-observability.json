@@ -985,7 +985,7 @@
         "uid": "loki"
       },
       "gridPos": {
-        "h": 9,
+        "h": 19,
         "w": 18,
         "x": 6,
         "y": 21
@@ -1027,8 +1027,8 @@
       {
         "current": {
           "selected": false,
-          "text": "app-a",
-          "value": "app-a"
+          "text": "app-c",
+          "value": "app-c"
         },
         "datasource": {
           "type": "prometheus",
@@ -1053,7 +1053,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "",
           "value": ""
         },
@@ -1075,13 +1075,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "America/Sao_Paulo",
   "title": "Spring Boot Observability",
   "uid": "dLsDQIUnzb",
   "version": 1,
-  "weekStart": ""
+  "weekStart": "sunday"
 }

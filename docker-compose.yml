@@ -61,6 +61,13 @@ services:
       - prometheus
     logging: *default-logging
 
+  node-cert-exporter:
+    container_name: cert-exporter
+    image: amimof/node-cert-exporter:v1.1.1
+    ports: 
+      - 9117:9117
+    command: '--logtostderr=true --include-glob /etc/ssl/*/*.pem'
+
   # Aplicações
   app-a:
     container_name: app-a

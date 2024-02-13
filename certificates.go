@@ -23,7 +23,7 @@ type CertsInfo struct {
 }
 
 func main() {
-	targetURL := "https://google.com.br"
+	targetURL := "https://www.copass-saude.org.br/"
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
@@ -43,10 +43,27 @@ func main() {
 
 	Cert := response.TLS.PeerCertificates[0]
 
+	monthsList := map[time.Month]string{
+		1:  "Janeiro",
+		2:  "Fevereiro",
+		3:  "Março",
+		4:  "Abril",
+		5:  "Maio",
+		6:  "Junho",
+		7:  "Julho",
+		8:  "Agosto",
+		9:  "Setembro",
+		10: "Outubro",
+		11: "Novembro",
+		12: "Dezembro",
+	}
+
+	expirationMonth := monthsList[Cert.NotAfter.Month()]
+
 	CertInfo := CertsInfo{
 		DNS:                response.TLS.ServerName,
 		Issuer:             Cert.Issuer.Organization[0],
-		Expiration:         Cert.NotAfter.Format("02 de Janeiro de 2006 - 15:04h"),
+		Expiration:         Cert.NotAfter.Format("02 de " + expirationMonth + " de 2006 - 15:04h"),
 		PubKeyAlgorithm:    Cert.PublicKeyAlgorithm.String(),
 		SignatureAlgorithm: Cert.SignatureAlgorithm.String(),
 	}

@@ -920,7 +920,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "green",
+                  "fixedColor": "dark-blue",
                   "mode": "fixed"
                 }
               }
@@ -1026,7 +1026,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "app-c",
           "value": "app-c"
         },
@@ -1075,7 +1075,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},

@@ -23,8 +23,7 @@ type CertsInfo struct {
 }
 
 func main() {
-	targetURL := "https://www.copass-saude.org.br"
-
+	targetURL := "https://google.com.br"
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 		Transport: &http.Transport{

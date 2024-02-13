@@ -16,21 +16,25 @@ services:
   loki:
     container_name: grafana-loki
     image: grafana/loki:2.9.3
+    user: root
     command: -config.file=/etc/loki/config.yml
     volumes:
       - ./configs/grafana/loki/config.yml:/etc/loki/config.yml
+      - ./configs/grafana/loki/data:/loki/wal/
     ports:
       - 3100:3100
 
   prometheus:
     container_name: prometheus
     image: prom/prometheus:v2.49.1
+    user: root
     ports:
       - 9090:9090
     volumes:
-      - ./configs/prometheus:/workspace
+      - ./configs/prometheus/prometheus.yml:/prometheus/config.yml
+      - ./configs/prometheus/data/:/prometheus/data/
     command:
-      - --config.file=/workspace/prometheus.yml
+      - --config.file=/prometheus/config.yml
       - --enable-feature=exemplar-storage
     depends_on:
       - loki
@@ -39,7 +43,10 @@ services:
   tempo:
     container_name: grafana-tempo
     image: grafana/tempo:2.3.1
-    command: [ '--target=all', '--storage.trace.backend=local', '--storage.trace.local.path=/traces', '--auth.enabled=false' ]
+    command: [ '--target=all', '--storage.trace.backend=local', '--storage.trace.local.path=/var/tempo/cluster', '--auth.enabled=false' ]
+    volumes:
+      - ./configs/grafana/tempo/data/:/var/tempo/wal/
+      - ./configs/grafana/tempo/data/cluster/:/var/tempo/cluster/
     ports:
       - 14250:14250
       - 4317:4317
@@ -50,6 +57,7 @@ services:
   grafana:
     container_name: grafana
     image: grafana/grafana:10.3.1
+    user: root
     ports:
       - 3000:3000
     volumes:

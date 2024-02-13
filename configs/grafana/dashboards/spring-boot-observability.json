@@ -905,7 +905,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "red",
+                  "fixedColor": "#e24d42",
                   "mode": "fixed"
                 }
               }
@@ -920,7 +920,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-blue",
+                  "fixedColor": "dark-green",
                   "mode": "fixed"
                 }
               }
@@ -936,6 +936,36 @@
                 "id": "color",
                 "value": {
                   "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DEBUG"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WARN"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-orange",
                   "mode": "fixed"
                 }
               }
@@ -1026,7 +1056,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "app-c",
           "value": "app-c"
         },
@@ -1082,6 +1112,6 @@
   "timezone": "America/Sao_Paulo",
   "title": "Spring Boot Observability",
   "uid": "dLsDQIUnzb",
-  "version": 1,
+  "version": 3,
   "weekStart": "sunday"
 }

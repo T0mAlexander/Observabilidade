@@ -375,7 +375,7 @@ Coleta métricas das aplicações
 
 #### Configuração do Prometheus
 
-Defina todo o rascunho/scrape de métricas de todas as aplicações no arquivo localizado em `etc/prometheus/prometheus.yml`.
+Defina todo o rascunho/scrape de métricas de todas as aplicações no arquivo localizado em `./configs/prometheus/prometheus.yml`.
 
 Prometheus irá extrair automaticamente o formato de métricas do OpenMetrics, e não há necessidade de adicionar configuração especifica de cabeçalhos quando extraindo da rota `/actuator/prometheus`.
 
@@ -455,7 +455,7 @@ name: Tempo
 type: tempo
 typeName: Tempo
 access: proxy
-url: http://tempo
+url: http://tempo:4137
 password: ''
 user: ''
 database: ''
@@ -541,19 +541,23 @@ editable: true
 
 ### Grafana
 
-1. Adicione o Prometheus, Tempo e Loki para a fonte de dados com o arquivo de configuração no caminho `etc/grafana/datasource.yml`.
+1. Adicione o Prometheus, Tempo e Loki para a fonte de dados com o arquivo de configuração no caminho `./configs/grafana/datasource.yml`.
 
-2. Carregue um painel predefinido a partir dos arquivos localizados em `etc/dashboards.yaml` e também `etc/dashboards/spring-boot-observability.json`
+2. Carregue um painel predefinido a partir dos arquivos localizados em `.configs/grafana/dashboards.yaml` e também `./configs/grafana/dashboards/spring-boot-observability.json`
 
 ```yml
 # Configuração individual do container do Grafana no docker-compose.yml
 
-grafana:
-  image: grafana/grafana:10.3.1
-  volumes:
-    - ./etc/grafana/:/etc/grafana/provisioning/datasources # Fonte de dados
-    - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml # Configurações do painel
-    - ./etc/dashboards:/etc/grafana/dashboards # Diretório de arquivos JSON de painéis
+  grafana:
+    container_name: grafana
+    build: ./configs/grafana/
+    user: root
+    ports:
+      - 3000:3000
+    volumes:
+      - ./configs/grafana/datasource.yml:/usr/share/grafana/conf/provisioning/datasources/datasources.yml # Fonte de dados
+      - ./configs/grafana/dashboards.yml:/usr/share/grafana/conf/provisioning/dashboards/dashboards.yml # Configurações do painel
+      - ./configs/grafana/dashboards:/usr/share/grafana/dashboards # Diretório de arquivos JSON de painéis
 ```
 
 ## Referências

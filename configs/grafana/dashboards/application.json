@@ -72,7 +72,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.1",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": {
@@ -155,7 +155,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.1",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": {
@@ -255,7 +255,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "10.3.1",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": {
@@ -325,7 +325,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.1",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": {
@@ -1110,8 +1110,8 @@
   },
   "timepicker": {},
   "timezone": "America/Sao_Paulo",
-  "title": "Spring Boot Observability",
+  "title": "Application",
   "uid": "dLsDQIUnzb",
-  "version": 3,
+  "version": 1,
   "weekStart": "sunday"
 }

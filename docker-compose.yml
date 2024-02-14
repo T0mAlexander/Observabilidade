@@ -19,8 +19,8 @@ services:
     user: root
     command: -config.file=/etc/loki/config.yml
     volumes:
-      - ./configs/grafana/loki/config.yml:/etc/loki/config.yml
-      - ./configs/grafana/loki/data:/loki/wal/
+      - ./configs/loki/config.yml:/etc/loki/config.yml
+      - ./configs/loki/data:/loki/wal/
     ports:
       - 3100:3100
     restart: always
@@ -47,8 +47,8 @@ services:
     image: grafana/tempo:2.3.1
     command: [ '--target=all', '--storage.trace.backend=local', '--storage.trace.local.path=/var/tempo/cluster', '--auth.enabled=false' ]
     volumes:
-      - ./configs/grafana/tempo/data/:/var/tempo/wal/
-      - ./configs/grafana/tempo/data/cluster/:/var/tempo/cluster/
+      - ./configs/tempo/data/:/var/tempo/wal/
+      - ./configs/tempo/data/cluster/:/var/tempo/cluster/
     ports:
       - 14250:14250
       - 4317:4317
@@ -68,11 +68,10 @@ services:
       - ./configs/grafana/dashboards.yml:/usr/share/grafana/conf/provisioning/dashboards/dashboards.yml
       - ./configs/grafana/dashboards:/usr/share/grafana/dashboards
       - ./configs/grafana/data:/usr/share/grafana/data
-      # - ./configs/grafana/alerts/:/usr/share/grafana/conf/provisioning/alerting/
-      # - ./configs/grafana/notifiers/:/usr/share/grafana/conf/provisioning/notifiers/
-      # - ./configs/grafana/plugins/:/usr/share/grafana/conf/provisioning/plugins/
-      # - ./configs/grafana/roles/:/usr/share/grafana/conf/provisioning/access-control/
-
+      - ./configs/grafana/alerts/:/usr/share/grafana/conf/provisioning/alerting/
+      - ./configs/grafana/notifiers/:/usr/share/grafana/conf/provisioning/notifiers/
+      - ./configs/grafana/plugins/:/usr/share/grafana/conf/provisioning/plugins/
+      - ./configs/grafana/roles/:/usr/share/grafana/conf/provisioning/access-control/
     depends_on:
       - loki
       - prometheus

@@ -25,6 +25,7 @@ public class AppApplication {
 
   Logger logger = LoggerFactory.getLogger(AppApplication.class);
 
+  // Inicialização da aplicação
   public static void main(String[] args) {
     SpringApplication.run(AppApplication.class, args);
   }

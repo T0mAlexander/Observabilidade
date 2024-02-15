@@ -45,7 +45,11 @@ services:
   tempo:
     container_name: grafana-tempo
     image: grafana/tempo:2.3.1
-    command: [ '--target=all', '--storage.trace.backend=local', '--storage.trace.local.path=/var/tempo/cluster', '--auth.enabled=false' ]
+    command: 
+      - --target=all
+      - --storage.trace.backend=local
+      - --storage.trace.local.path=/var/tempo/cluster
+      - --auth.enabled=false
     volumes:
       - ./configs/tempo/data/:/var/tempo/wal/
       - ./configs/tempo/data/cluster/:/var/tempo/cluster/
@@ -74,7 +78,11 @@ services:
       - ./configs/grafana/roles/:/usr/share/grafana/conf/provisioning/access-control/
     depends_on:
       - loki
+      - tempo
       - prometheus
+      - app-a
+      - app-b
+      - app-c
     logging: *default-logging
     restart: always
 
@@ -91,13 +99,19 @@ services:
     container_name: app-a
     build: ./app/
     environment:
+      - OTEL_SERVICE_NAME=app-a # Nome do serviço para o Span
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # Envia rastreamentos ao Grafana Tempo
+      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-a # Nome customizado para o Grafana Tempo e Loki
+      - OTEL_METRICS_EXPORTER=opentelemetry # Desabilitado exportador de métricas
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-a # Sobrescrever o valor padrão de "management.metrics.tags.application" localizado em "app/src/main/resources/application.properties"
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # Envia rastreamentos ao Grafana Tempo
-      - OTEL_SERVICE_NAME=app-a # Nome do serviço para o Span
-      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-a # Atributo customizado para o Grafana Tempo e Loki
-      - OTEL_METRICS_EXPORTER=none # Desabilitado exportador de métricas
-      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-a # Sobrescrever o valor padrão de "management.metrics.tags.application" localizado em "app/src/main/resources/application.properties"
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_JAVAAGENT_DEBUG=true
+      - OTEL_JAVAAGENT_LOGGING=application
+      - OTEL_EXPORTER_OTLP_CERTIFICATE=http://cert-exporter:9117
     ports:
       - 8080:8080
     logging: *default-logging
@@ -106,13 +120,19 @@ services:
     container_name: app-b
     build: ./app/
     environment:
+      - OTEL_SERVICE_NAME=app-b
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-b
+      - OTEL_METRICS_EXPORTER=opentelemetry
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-b
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
-      - OTEL_SERVICE_NAME=app-b
-      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-b
-      - OTEL_METRICS_EXPORTER=none
-      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-b
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_JAVAAGENT_DEBUG=true
+      - OTEL_JAVAAGENT_LOGGING=application
+      - OTEL_EXPORTER_OTLP_CERTIFICATE=http://cert-exporter:9117
     ports:
       - 8081:8080
     logging: *default-logging
@@ -121,13 +141,19 @@ services:
     container_name: app-c
     build: ./app/
     environment:
+      - OTEL_SERVICE_NAME=app-c
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-c
+      - OTEL_METRICS_EXPORTER=opentelemetry
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-c
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
-      - OTEL_SERVICE_NAME=app-c
-      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-c
-      - OTEL_METRICS_EXPORTER=none
-      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-c
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_JAVAAGENT_DEBUG=true
+      - OTEL_JAVAAGENT_LOGGING=application
+      - OTEL_EXPORTER_OTLP_CERTIFICATE=http://cert-exporter:9117
     ports:
       - 8082:8080
     logging: *default-logging

@@ -36,7 +36,7 @@ datasources:
     type: tempo
     typeName: Tempo
     access: proxy
-    url: http://tempo:4317
+    url: http://tempo
     password: ''
     user: ''
     database: ''

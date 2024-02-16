@@ -13,4 +13,4 @@ RUN rc-update add grafana default
 
 EXPOSE 3000
 
-ENTRYPOINT [ "/scripts/setup.sh" ]
+CMD [ "sh", "/usr/sbin/grafana-server", "--homepath=/usr/share/grafana" ]

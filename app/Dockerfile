@@ -11,4 +11,4 @@ FROM openjdk:8-jre-alpine
 COPY --from=build /build/target/*.jar /app.jar
 COPY --from=download /home/curl_user/opentelemetry-agent.jar /opentelemetry-agent.jar
 
-CMD ["java", "-javaagent:/opentelemetry-agent.jar", "-jar", "/app.jar" ]
+ENTRYPOINT ["java", "-javaagent:/opentelemetry-agent.jar", "-jar", "/app.jar" ]

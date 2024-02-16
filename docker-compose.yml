@@ -68,7 +68,8 @@ services:
       - ./configs/grafana/datasource.yml:/usr/share/grafana/conf/provisioning/datasources/datasources.yml
       - ./configs/grafana/dashboards.yml:/usr/share/grafana/conf/provisioning/dashboards/dashboards.yml
       - ./configs/grafana/dashboards:/usr/share/grafana/dashboards
-      - ./configs/grafana/data:/usr/share/grafana/data
+      - ./configs/grafana/grafana.db:/usr/share/grafana/data/grafana.db
+      # - ./configs/grafana/data:/usr/share/grafana/data
       # - ./configs/grafana/alerts/:/usr/share/grafana/conf/provisioning/alerting/
       # - ./configs/grafana/notifiers/:/usr/share/grafana/conf/provisioning/notifiers/
       # - ./configs/grafana/plugins/:/usr/share/grafana/conf/provisioning/plugins/
@@ -82,12 +83,16 @@ services:
       - app-c
     logging: *default-logging
 
-  cert-exporter:
-    container_name: cert-exporter
-    image: amimof/node-cert-exporter:v1.1.1
+  blackbox-exporter:
+    container_name: blackbox-exporter
+    image: prom/blackbox-exporter:v0.24.0
     ports: 
-      - 9117:9117
-    command: '--logtostderr=true --include-glob /etc/ssl/*/*.pem'
+      - 9115:9115
+    volumes:
+      - ./configs/blackbox/config.yml:/blackbox/config.yml
+    command: --config.file=/blackbox/config.yml
+    depends_on:
+      - prometheus
 
   # Aplicações
   app-a:
@@ -103,6 +108,8 @@ services:
       - TARGET_TWO_HOST=app-c
       # - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
+    depends_on:
+      - postgres
     ports:
       - 8080:8080
     logging: *default-logging
@@ -120,6 +127,8 @@ services:
       - TARGET_TWO_HOST=app-c
       # - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
+    depends_on:
+      - postgres
     ports:
       - 8081:8080
     logging: *default-logging
@@ -137,6 +146,8 @@ services:
       - TARGET_TWO_HOST=app-c
       # - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
+    depends_on:
+      - postgres
     ports:
       - 8082:8080
     logging: *default-logging

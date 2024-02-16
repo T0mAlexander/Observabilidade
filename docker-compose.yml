@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 name: java-observabilidade
 
 x-logging: &default-logging
@@ -12,10 +12,11 @@ x-logging: &default-logging
       - regex:
           expression: '^(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}.\d{3}) (?P<message>(?s:.*))$$'
 
+# Infraestrutura
 services:
   loki:
-    container_name: grafana-loki
-    image: grafana/loki:2.9.3
+    container_name: loki
+    image: grafana/loki:2.9.4
     user: root
     command: -config.file=/etc/loki/config.yml
     volumes:
@@ -23,16 +24,15 @@ services:
       - ./configs/loki/data:/loki/wal/
     ports:
       - 3100:3100
-    restart: always
 
   prometheus:
     container_name: prometheus
-    image: prom/prometheus:v2.49.1
     user: root
+    image: prom/prometheus:v2.49.1
     ports:
       - 9090:9090
     volumes:
-      - ./configs/prometheus/prometheus.yml:/prometheus/config.yml
+      - ./configs/prometheus/config.yml:/prometheus/config.yml
       - ./configs/prometheus/data/:/prometheus/data/
     command:
       - --config.file=/prometheus/config.yml
@@ -40,10 +40,9 @@ services:
     depends_on:
       - loki
     logging: *default-logging
-    restart: always
 
   tempo:
-    container_name: grafana-tempo
+    container_name: tempo
     image: grafana/tempo:2.3.1
     command: 
       - --target=all
@@ -59,12 +58,10 @@ services:
     depends_on:
       - loki
     logging: *default-logging
-    restart: always
 
   grafana:
     container_name: grafana
     build: ./configs/grafana/
-    user: root
     ports:
       - 3000:3000
     volumes:
@@ -72,10 +69,10 @@ services:
       - ./configs/grafana/dashboards.yml:/usr/share/grafana/conf/provisioning/dashboards/dashboards.yml
       - ./configs/grafana/dashboards:/usr/share/grafana/dashboards
       - ./configs/grafana/data:/usr/share/grafana/data
-      - ./configs/grafana/alerts/:/usr/share/grafana/conf/provisioning/alerting/
-      - ./configs/grafana/notifiers/:/usr/share/grafana/conf/provisioning/notifiers/
-      - ./configs/grafana/plugins/:/usr/share/grafana/conf/provisioning/plugins/
-      - ./configs/grafana/roles/:/usr/share/grafana/conf/provisioning/access-control/
+      # - ./configs/grafana/alerts/:/usr/share/grafana/conf/provisioning/alerting/
+      # - ./configs/grafana/notifiers/:/usr/share/grafana/conf/provisioning/notifiers/
+      # - ./configs/grafana/plugins/:/usr/share/grafana/conf/provisioning/plugins/
+      # - ./configs/grafana/roles/:/usr/share/grafana/conf/provisioning/access-control/
     depends_on:
       - loki
       - tempo
@@ -84,7 +81,6 @@ services:
       - app-b
       - app-c
     logging: *default-logging
-    restart: always
 
   cert-exporter:
     container_name: cert-exporter
@@ -92,7 +88,6 @@ services:
     ports: 
       - 9117:9117
     command: '--logtostderr=true --include-glob /etc/ssl/*/*.pem'
-    restart: always
 
   # Aplicações
   app-a:
@@ -111,7 +106,6 @@ services:
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
-      - OTEL_EXPORTER_OTLP_CERTIFICATE=http://cert-exporter:9117
     ports:
       - 8080:8080
     logging: *default-logging
@@ -132,7 +126,6 @@ services:
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
-      - OTEL_EXPORTER_OTLP_CERTIFICATE=http://cert-exporter:9117
     ports:
       - 8081:8080
     logging: *default-logging
@@ -153,7 +146,6 @@ services:
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
-      - OTEL_EXPORTER_OTLP_CERTIFICATE=http://cert-exporter:9117
     ports:
       - 8082:8080
     logging: *default-logging
@@ -176,8 +168,8 @@ services:
       - 6379:6379
     logging: *default-logging
 
-  # grafana-k6:
-    # container_name: grafana-k6
+  # k6:
+    # container_name: k6
     # image: grafana/k6:0.49.0
     # volumes:
       # - ./scripts/grafana-k6.js:/scripts/grafana-k6.js:ro

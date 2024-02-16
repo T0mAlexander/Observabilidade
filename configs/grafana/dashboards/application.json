@@ -90,7 +90,7 @@
         }
       ],
       "timeFrom": "24h",
-      "title": "Total Requests",
+      "title": "Requisições Globais",
       "transformations": [
         {
           "id": "seriesToRows",
@@ -173,7 +173,7 @@
         }
       ],
       "timeFrom": "24h",
-      "title": "Requests Count",
+      "title": "Contador de requisições HTTP",
       "transformations": [
         {
           "id": "seriesToRows",
@@ -271,7 +271,7 @@
           "refId": "A"
         }
       ],
-      "title": "Requests Average Duration",
+      "title": "Latência média de rotas",
       "type": "bargauge"
     },
     {
@@ -342,7 +342,7 @@
         }
       ],
       "timeFrom": "24h",
-      "title": "Total Exceptions",
+      "title": "Total de Exceções",
       "type": "stat"
     },
     {
@@ -441,7 +441,7 @@
           "refId": "A"
         }
       ],
-      "title": "Percent of 2xx Requests",
+      "title": "Porcentagem de requisições HTTP 2xx",
       "type": "timeseries"
     },
     {
@@ -540,7 +540,7 @@
           "refId": "A"
         }
       ],
-      "title": "Percent of 5xx Requests",
+      "title": "Porcentagem de requisições HTTP 5xx",
       "type": "timeseries"
     },
     {
@@ -638,7 +638,7 @@
           "refId": "A"
         }
       ],
-      "title": "PR 99 Requests Duration",
+      "title": "Duração de 99% das requisições",
       "type": "timeseries"
     },
     {
@@ -736,7 +736,7 @@
           "refId": "A"
         }
       ],
-      "title": "PR 95 Requests Duration",
+      "title": "Duração de 99% das requisições",
       "type": "timeseries"
     },
     {
@@ -834,7 +834,7 @@
           "refId": "A"
         }
       ],
-      "title": "Request Per Sec",
+      "title": "Requisições por segundo",
       "type": "timeseries"
     },
     {
@@ -1006,7 +1006,7 @@
           "refId": "A"
         }
       ],
-      "title": "Log Type Rate",
+      "title": "Taxa de Tipos de Log",
       "type": "timeseries"
     },
     {
@@ -1045,7 +1045,7 @@
           "refId": "A"
         }
       ],
-      "title": "Log of All Spring Boot Apps",
+      "title": "Central de Logs",
       "type": "logs"
     }
   ],
@@ -1105,12 +1105,12 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "America/Sao_Paulo",
-  "title": "Application",
+  "title": "Aplicação",
   "uid": "dLsDQIUnzb",
   "version": 1,
   "weekStart": "sunday"

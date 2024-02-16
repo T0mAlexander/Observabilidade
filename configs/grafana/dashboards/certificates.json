@@ -454,7 +454,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 210
+                "value": 204
               }
             ]
           },
@@ -467,6 +467,18 @@
               {
                 "id": "custom.width",
                 "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Expiração"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 263
               }
             ]
           }

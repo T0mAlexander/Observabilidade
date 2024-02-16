@@ -97,14 +97,11 @@ services:
       - OTEL_SERVICE_NAME=app-a # Nome do serviço para o Span
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # Envia rastreamentos ao Grafana Tempo
       - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-a # Nome customizado para o Grafana Tempo e Loki
-      - OTEL_METRICS_EXPORTER=opentelemetry # Desabilitado exportador de métricas
+      - OTEL_METRICS_EXPORTER=none # Desabilitado exportador de métricas
       - MANAGEMENT_METRICS_TAGS_APPLICATION=app-a # Sobrescrever o valor padrão de "management.metrics.tags.application" localizado em "app/src/main/resources/application.properties"
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      - OTEL_LOGS_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_JAVAAGENT_DEBUG=true
+      # - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
     ports:
       - 8080:8080
@@ -117,14 +114,11 @@ services:
       - OTEL_SERVICE_NAME=app-b
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
       - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-b
-      - OTEL_METRICS_EXPORTER=opentelemetry
+      - OTEL_METRICS_EXPORTER=none
       - MANAGEMENT_METRICS_TAGS_APPLICATION=app-b
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      - OTEL_LOGS_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_JAVAAGENT_DEBUG=true
+      # - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
     ports:
       - 8081:8080
@@ -137,14 +131,11 @@ services:
       - OTEL_SERVICE_NAME=app-c
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
       - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-c
-      - OTEL_METRICS_EXPORTER=opentelemetry
+      - OTEL_METRICS_EXPORTER=none
       - MANAGEMENT_METRICS_TAGS_APPLICATION=app-c
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      - OTEL_LOGS_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_JAVAAGENT_DEBUG=true
+      # - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
     ports:
       - 8082:8080

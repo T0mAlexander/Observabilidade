@@ -8,11 +8,12 @@ Monitoramento de uma aplicação em Spring Boot com os três pilares da observab
 
 - Centralização de logs com [Grafana Loki](https://grafana.com/docs/loki/latest/) e [Logback](https://www.slf4j.org/manual.html)
 
-![Observability Architecture](./images/observability-arch.jpg)
+![Arquitetutra](./images/observability-arch.jpg)
+> Errata: a rota de extração de métricas de todas as aplicações é a **`/actuator/prometheus`**
 
 ## Indíce
 
-- [Spring Boot com Observabilidade](#indíce)
+- [Aplicação](#indíce)
   - [Inicialização rápida](#inicialização-rápida)
   - [Explorando o Grafana](#explorando-o-grafana)
     - [Métricas em Rastreamento](#métricas-em-rastreamento)
@@ -42,11 +43,13 @@ Monitoramento de uma aplicação em Spring Boot com os três pilares da observab
 
 ## Inicialização rápida
 
-1. Instale o [plugin do Loki](https://grafana.com/docs/loki/latest/send-data/docker-driver/)
+1. Instale o [driver do Loki](https://grafana.com/docs/loki/latest/send-data/docker-driver/) para extração de logs dos containers
 
    ```bash
    docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
    ```
+
+  > **Atenção**: atente-se a versão instalada pois ela deverá ser a mesma do container do Grafana Loki
 
 2. Inicialize todos os contêineres
 
@@ -54,22 +57,23 @@ Monitoramento de uma aplicação em Spring Boot com os três pilares da observab
    docker compose up -d
    ```
 
-3. Envie múltipla requisições com [siege](https://linux.die.net/man/1/siege) e curl para a aplicação
+3. Execute scripts simulando interações nas aplicações
 
    ```bash
-   sh scripts/tracing.sh
-   sh scripts/requests.sh
+   sh scripts/tracing.sh && sh scripts/requests.sh
    ```
 
+   > **Obrigatório**: é necessário instalar o pacote [siege](https://linux.die.net/man/1/siege)
+   >
    >**Dica**: se preferir, remova comentários na parte de configuração do container do [Grafana K6](https://k6.io/) no `docker-compose.yml` ou através do Swagger UI disponível na rota **`/swagger-ui/index.html`**
 
-4. Acesse o Grafana através do endereço [localhost:3000](http://localhost:3000/) e vá até o painel `Spring Boot Observability`
+4. Acesse o Grafana através do endereço [localhost:3000](http://localhost:3000/) e vá até o painel `Aplicação`
 
->**Credenciais**: por padrão, o login e senha do Grafana é `admin`
+>**Credenciais**: o login é `admin-a` e senha é `grafana`
 
    Captura de tela exemplar:
 
-   ![Spring Boot Monitoring Dashboard](./images/dashboard.png)
+   ![Painel de Monitoramento](./images/dashboard.png)
 
    >Este painel predefinido para aplicações em Spring Boot está disponível no [Marketplace de dashboards do Grafana](https://grafana.com/grafana/dashboards/17175).
 
@@ -77,9 +81,9 @@ Monitoramento de uma aplicação em Spring Boot com os três pilares da observab
 
 Grafana fornece uma grande solução, no qual podemos monitorar ações específicas em um serviço entre rastreamentos, métricas e logs através do ID de rastreamento.
 
-![Observability Correlations](./images/observability-correlations.jpeg)
+![Correlação da Observabilidade](./images/observability-correlations.jpeg)
 
-Fonte da imagem: [Grafana](https://grafana.com/blog/2021/03/31/intro-to-exemplars-which-enable-grafana-tempos-distributed-tracing-at-massive-scale/)
+>Fonte da imagem: [Grafana](https://grafana.com/blog/2021/03/31/intro-to-exemplars-which-enable-grafana-tempos-distributed-tracing-at-massive-scale/)
 
 ### Métricas em Rastreamento
 
@@ -109,7 +113,7 @@ Para um cenário mais complexo, usaremos estas aplicações em Spring Boot com o
 
 #### Instrumentação com OpenTelemetry
 
-[OpenTelemetry para Java](https://github.com/open-telemetry/opentelemetry-java-instrumentation) possui SDK para [instrumentação automática](https://opentelemetry.io/docs/instrumentation/java/automatic/):
+[OpenTelemetry para Java](https://github.com/open-telemetry/opentelemetry-java-instrumentation) possui um SDK para [instrumentação automática](https://opentelemetry.io/docs/instrumentation/java/automatic/):
 
 ```bash
 java -javaagent:localização/do/opentelemetry-agent.jar -jar [nome da aplicação].jar
@@ -118,6 +122,26 @@ java -javaagent:localização/do/opentelemetry-agent.jar -jar [nome da aplicaç�
 O agente suporta diversas [bibliotecas](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/supported-libraries.md), incluindo o Spring Web MVC. Segundo o documento traduzido do inglês:
 
 > Pode ser usado para capturar dados de telemetria nos "limites" de uma aplicação ou serviço, tais como requisições de entrada, chamadas de saídas HTTP, chamadas ao banco de dados e muito mais
+
+Configuração do OpenTelemetry
+
+```java
+// Fornecedor automatizado de logs, métricas e traces do OpenTelemetry
+
+package com.example.app;
+
+import io.prometheus.client.exemplars.tracer.otel_agent.OpenTelemetryAgentSpanContextSupplier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenTelemetryConfig {
+  @Bean
+  public OpenTelemetryAgentSpanContextSupplier OTelAgentSupplier() {
+    return new OpenTelemetryAgentSpanContextSupplier();
+  }
+}
+```
 
 Então não precisamos modificar qualquer linha de código de nosso repositório. O agente se encarregará de tudo automaticamente. Neste projeto, temos três tipos de ações que podem ser capturadas pelo agente:
 
@@ -371,7 +395,7 @@ http_server_requests_seconds_bucket{application="app",exception="None",method="G
 
 ### Prometheus - Métricas
 
-Coleta métricas das aplicações
+Coleta métricas das aplicações e expõe em uma rota
 
 #### Configuração do Prometheus
 
@@ -455,7 +479,7 @@ name: Tempo
 type: tempo
 typeName: Tempo
 access: proxy
-url: http://tempo:4137
+url: http://tempo
 password: ''
 user: ''
 database: ''
@@ -477,7 +501,7 @@ editable: true
 
 ### Grafana Loki - Logs
 
-Centralizador de logs com o plugin do Docker de todos os serviços.
+Centralizador de logs com o plugin do Docker de todos os serviços
 
 #### Driver do Docker
 
@@ -487,12 +511,12 @@ Centralizador de logs com o plugin do Docker de todos os serviços.
    2. loki-pipeline-stages: processa múltiplas linhas de log da aplicação com estágios de múltiplas linhas de RegExp ([referência](https://grafana.com/docs/loki/latest/send-data/promtail/stages/multiline/))
 
 ```yml
-version: '3.8'
+version: '3.9'
 
 x-logging: &default-logging # ancôra(&): 'default-logging' que define um pedaço/parte (chunk) da configuração
   driver: loki
   options:
-    loki-url: http://localhost:3100/api/prom/push
+    loki-url: http://loki:3100/api/prom/push
     loki-pipeline-stages: |
       - multiline:
           firstline: '^\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}'

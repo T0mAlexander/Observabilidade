@@ -1,12 +1,15 @@
-// Configuração do OpenTelemetry
-// Referência técnica: https://github.com/open-telemetry/opentelemetry-java-examples/tree/main/autoconfigure
+// Fornecedor automatizado de logs, métricas e traces do OpenTelemetry
 
 package com.example.app;
 
-import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+import io.prometheus.client.exemplars.tracer.otel_agent.OpenTelemetryAgentSpanContextSupplier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public final class OpenTelemetryConfig {
-  public static void main(String[] args) throws InterruptedException {
-    AutoConfiguredOpenTelemetrySdk.initialize().getOpenTelemetrySdk();
+@Configuration
+public class OpenTelemetryConfig {
+  @Bean
+  public OpenTelemetryAgentSpanContextSupplier OTelAgentSupplier() {
+    return new OpenTelemetryAgentSpanContextSupplier();
   }
 }

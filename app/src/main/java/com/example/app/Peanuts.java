@@ -12,10 +12,10 @@ public class Peanuts implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Schema(example = "Snoopy")
+  @Schema(example = "Nome exeplar")
   private String name;
 
-  @Schema(example = "Charlie Brown's pet beagle")
+  @Schema(example = "Descrição exemplar")
   private String description;
 
   // ID

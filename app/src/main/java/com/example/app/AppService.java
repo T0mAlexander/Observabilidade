@@ -6,19 +6,19 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PeanutsService {
+public class AppService {
   @Autowired
-  private PeanutsRepository repository;
+  private AppRepository repository;
 
   @SuppressWarnings("null")
   @Cacheable(value = "peanuts", key = "#id")
-  public Peanuts getPeanutsById(Long id) {
+  public Schemas getPeanutsById(Long id) {
     return repository.findById(id).orElse(null);
   }
 
   @SuppressWarnings("null")
   @CachePut(value = "peanuts", key = "#peanuts.id")
-  public Peanuts savePeanuts(Peanuts peanuts) {
+  public Schemas savePeanuts(Schemas peanuts) {
     return repository.save(peanuts);
   }
 }

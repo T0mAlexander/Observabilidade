@@ -19,15 +19,15 @@ import java.util.Random;
 @SpringBootApplication
 @RestController
 @EnableCaching
-public class AppApplication {
+public class AppStart {
   @Autowired
-  private PeanutsService service;
+  private AppService service;
 
-  Logger logger = LoggerFactory.getLogger(AppApplication.class);
+  Logger logger = LoggerFactory.getLogger(AppStart.class);
 
   // Inicialização da aplicação
   public static void main(String[] args) {
-    SpringApplication.run(AppApplication.class, args);
+    SpringApplication.run(AppStart.class, args);
   }
 
   @GetMapping("/")
@@ -93,13 +93,13 @@ public class AppApplication {
   }
 
   @GetMapping("/peanuts/{id}")
-  public Peanuts getPeanutsById(@PathVariable Long id) {
+  public Schemas getPeanutsById(@PathVariable Long id) {
     logger.info("Obtendo recursos");
     return service.getPeanutsById(id);
   }
 
   @PostMapping("/peanuts")
-  public Peanuts savePeanuts(@RequestBody Peanuts peanuts) {
+  public Schemas savePeanuts(@RequestBody Schemas peanuts) {
     logger.info("Criando recurso");
     return service.savePeanuts(peanuts);
   }

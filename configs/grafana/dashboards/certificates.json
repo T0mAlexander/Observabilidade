@@ -84,7 +84,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Expiration"
+                "value": "Expiração"
               },
               {
                 "id": "unit",
@@ -133,7 +133,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Issuer"
+                "value": "Emissor"
               },
               {
                 "id": "custom.align"
@@ -148,7 +148,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Application"
+                "value": "Host"
               }
             ]
           }
@@ -190,7 +190,7 @@
           "refId": "A"
         }
       ],
-      "title": "Node Certificates",
+      "title": "Lista de certificados",
       "transformations": [
         {
           "id": "merge",
@@ -240,6 +240,6 @@
   "timezone": "America/Sao_Paulo",
   "title": "Certificados",
   "uid": "F_gILm6iz",
-  "version": 1,
+  "version": 2,
   "weekStart": "sunday"
 }

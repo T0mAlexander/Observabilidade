@@ -736,7 +736,7 @@
           "refId": "A"
         }
       ],
-      "title": "Duração de 99% das requisições",
+      "title": "Duração de 95% das requisições",
       "type": "timeseries"
     },
     {
@@ -1112,6 +1112,6 @@
   "timezone": "America/Sao_Paulo",
   "title": "Aplicação",
   "uid": "dLsDQIUnzb",
-  "version": 3,
+  "version": 5,
   "weekStart": "sunday"
 }

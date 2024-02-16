@@ -562,7 +562,7 @@ editable: true
 
 ## Referências
 
-1. [Repositório de Observabilidade em nuvem com Grafana e Spring Boot](https://github.com/qaware/cloud-observability-grafana-spring-boot)
+1. [Repositório base](https://github.com/blueswen/spring-boot-observability)
 2. [Suporte de Histograma do Prometheus para Exemplar](https://github.com/micrometer-metrics/micrometer/issues/2812)
 3. [Auto-configuração do SDK do OpenTelemetry](https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md)
 4. [Propriedades sistêmicas e variáveis de ambiente do Java](https://stackoverflow.com/questions/7054972/java-system-properties-and-environment-variables)

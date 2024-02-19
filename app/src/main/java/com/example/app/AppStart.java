@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,8 @@ import java.util.Random;
 @SpringBootApplication
 @RestController
 @EnableCaching
+@EnableJpaRepositories("com.example.app")
+@EntityScan("com.example.app")
 public class AppStart {
   @Autowired
   private AppService service;
@@ -93,13 +97,13 @@ public class AppStart {
   }
 
   @GetMapping("/peanuts/{id}")
-  public Schemas getPeanutsById(@PathVariable Long id) {
+  public AppSchemas getPeanutsById(@PathVariable Long id) {
     logger.info("Obtendo recursos");
     return service.getPeanutsById(id);
   }
 
   @PostMapping("/peanuts")
-  public Schemas savePeanuts(@RequestBody Schemas peanuts) {
+  public AppSchemas savePeanuts(@RequestBody AppSchemas peanuts) {
     logger.info("Criando recurso");
     return service.savePeanuts(peanuts);
   }

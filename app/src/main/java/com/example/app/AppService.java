@@ -10,15 +10,13 @@ public class AppService {
   @Autowired
   private AppRepository repository;
 
-  @SuppressWarnings("null")
   @Cacheable(value = "peanuts", key = "#id")
-  public Schemas getPeanutsById(Long id) {
+  public AppSchemas getPeanutsById(Long id) {
     return repository.findById(id).orElse(null);
   }
 
-  @SuppressWarnings("null")
   @CachePut(value = "peanuts", key = "#peanuts.id")
-  public Schemas savePeanuts(Schemas peanuts) {
+  public AppSchemas savePeanuts(AppSchemas peanuts) {
     return repository.save(peanuts);
   }
 }

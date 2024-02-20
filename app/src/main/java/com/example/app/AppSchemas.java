@@ -1,9 +1,12 @@
 package com.example.app;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class AppSchemas implements Serializable {
@@ -28,7 +31,6 @@ public class AppSchemas implements Serializable {
   public String getName() {
     return name;
   }
-
   public void setName(String name) {
     this.name = name;
   }
@@ -37,7 +39,6 @@ public class AppSchemas implements Serializable {
   public String getDescription() {
     return description;
   }
-
   public void setDescription(String description) {
     this.description = description;
   }

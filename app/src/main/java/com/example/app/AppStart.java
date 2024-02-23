@@ -16,6 +16,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import io.prometheus.metrics.exporter.httpserver.HTTPServer;
+import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
+import io.prometheus.metrics.simpleclient.bridge.SimpleclientCollector;
+
 @SpringBootApplication
 @RestController
 @EnableCaching
@@ -23,11 +27,22 @@ public class AppStart {
   @Autowired
   private AppService service;
 
-  Logger logger = LoggerFactory.getLogger(AppStart.class);
+  static Logger logger = LoggerFactory.getLogger(AppStart.class);
 
   // Inicialização da aplicação
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     SpringApplication.run(AppStart.class, args);
+
+    // Métricas da Java Virtual Machine (JVM)
+    JvmMetrics.builder().register();
+    SimpleclientCollector.builder().build();
+
+    // Configuração do Prometheus
+    HTTPServer prometheus = HTTPServer.builder()
+    .port(9090)
+    .buildAndStart();
+
+    logger.info("Prometheus disponível no endereço http://localhost:" + prometheus.getPort() + "/metrics");
   }
 
   @GetMapping("/")

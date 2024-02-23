@@ -25,34 +25,34 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ["localhost:9090", "cert-exporter:9117"]
+      - targets: ["localhost:9090", "blackbox-exporter:9115"]
 
   - job_name: 'app-a'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 5s
-    metrics_path: "/actuator/prometheus"
+    metrics_path: "/metrics"
 
     static_configs:
-      - targets: ['app-a:8080']
+      - targets: ['app-a:9090']
 
   - job_name: 'app-b'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 5s
-    metrics_path: "/actuator/prometheus"
+    metrics_path: "/metrics"
 
     static_configs:
-      - targets: ['app-b:8080']
+      - targets: ['app-b:9090']
 
   - job_name: 'app-c'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 5s
-    metrics_path: "/actuator/prometheus"
+    metrics_path: "/metrics"
 
     static_configs:
-      - targets: ['app-c:8080']
+      - targets: ['app-c:9090']
 
   - job_name: 'certs-tracker'
     metrics_path: /probe

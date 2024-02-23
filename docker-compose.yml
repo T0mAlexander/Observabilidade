@@ -53,7 +53,6 @@ services:
       - ./configs/tempo/data/:/var/tempo/wal/
       - ./configs/tempo/data/cluster/:/var/tempo/cluster/
     ports:
-      - 14250:14250
       - 4317:4317
     depends_on:
       - loki
@@ -106,12 +105,12 @@ services:
       - MANAGEMENT_METRICS_TAGS_APPLICATION=app-a # Sobrescrever o valor padrão de "management.metrics.tags.application" localizado em "app/src/main/resources/application.properties"
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      # - OTEL_JAVAAGENT_DEBUG=true
       - OTEL_JAVAAGENT_LOGGING=application
     depends_on:
       - postgres
     ports:
       - 8080:8080
+      - 9990:9090
     logging: *default-logging
 
   app-b:
@@ -125,12 +124,11 @@ services:
       - MANAGEMENT_METRICS_TAGS_APPLICATION=app-b
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      # - OTEL_JAVAAGENT_DEBUG=true
-      - OTEL_JAVAAGENT_LOGGING=application
     depends_on:
       - postgres
     ports:
       - 8081:8080
+      - 9991:9090
     logging: *default-logging
 
   app-c:
@@ -144,12 +142,11 @@ services:
       - MANAGEMENT_METRICS_TAGS_APPLICATION=app-c
       - TARGET_ONE_HOST=app-b
       - TARGET_TWO_HOST=app-c
-      # - OTEL_JAVAAGENT_DEBUG=true
-      - OTEL_JAVAAGENT_LOGGING=application
     depends_on:
       - postgres
     ports:
       - 8082:8080
+      - 9992:9090
     logging: *default-logging
 
   postgres:

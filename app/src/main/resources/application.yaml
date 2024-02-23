@@ -11,7 +11,7 @@ management:
       percentiles-histogram:
         http:
           server:
-            requests: 'true'
+            requests: true
 
 logging:
   pattern:

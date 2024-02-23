@@ -4,8 +4,9 @@ RUN curl -fsL "https://github.com/open-telemetry/opentelemetry-java-instrumentat
     -o "$HOME/opentelemetry-agent.jar"
 
 FROM maven:3.8.6-openjdk-8 AS build
-ADD . /build
-RUN cd /build && mvn package --quiet -DskipTests
+WORKDIR /build
+COPY . .
+RUN mvn package -DskipTests
 
 FROM openjdk:8-jre-alpine
 COPY --from=build /build/target/*.jar /app.jar

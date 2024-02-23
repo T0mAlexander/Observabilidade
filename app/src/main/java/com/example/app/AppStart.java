@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.prometheus.metrics.exporter.httpserver.HTTPServer;
+import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import jakarta.servlet.http.HttpServletResponse;
 
 @SpringBootApplication
@@ -32,11 +34,21 @@ public class AppStart {
   @Autowired
   private AppService service;
 
-  Logger logger = LoggerFactory.getLogger(AppStart.class);
+  static Logger logger = LoggerFactory.getLogger(AppStart.class);
 
   // Inicialização da aplicação
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     SpringApplication.run(AppStart.class, args);
+
+    // Métricas da Java Virtual Machine (JVM)
+    JvmMetrics.builder().register();
+
+    // Configuração do Prometheus
+    HTTPServer prometheus = HTTPServer.builder()
+    .port(8889)
+    .buildAndStart();
+
+    logger.info("Prometheus disponível no endereço http://localhost:" + prometheus.getPort() + "/metrics");
   }
 
   @GetMapping("/")

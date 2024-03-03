@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- Nome da aplicação -->
+  <property name="APP_NAME" value="app-java" />
+
+  <!-- Formatação dos logs -->
+  <property name="LOG_PATTERN" value="%d{dd/MM/yyyy} - %d{HH:mm:ss}  %-5level [THREAD] %thread  [LOGGER] %logger{36} - %message%n" />
+
+  <!-- Expositor de logs no console -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Gravação de logs em arquivo -->
+  <appender name="file" class="ch.qos.logback.core.FileAppender">
+    <!-- Nome do arquivo de saída -->
+    <file>${APP_NAME}.log</file>
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Definição do logger principal-->
+  <root level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="file"/>
+  </root>
+</configuration>

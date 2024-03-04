@@ -24,18 +24,18 @@ import io.prometheus.metrics.core.metrics.Info;
 import io.prometheus.metrics.core.metrics.StateSet;
 import io.prometheus.metrics.core.metrics.Summary;
 import io.prometheus.metrics.exporter.httpserver.HTTPServer;
-import io.prometheus.metrics.exporter.opentelemetry.OpenTelemetryExporter;
+// import io.prometheus.metrics.exporter.opentelemetry.OpenTelemetryExporter;
 import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
-import io.prometheus.metrics.model.snapshots.Labels;
 import io.prometheus.metrics.model.snapshots.Unit;
-import io.prometheus.metrics.model.snapshots.UnknownSnapshot;
 
 public class AppStart {
   public static void main(String[] args) throws IOException, Exception {
+    // Provedor de logs
     Logger logger = LoggerFactory.getLogger(AppStart.class);
     HttpServer application = HttpServer.create(new InetSocketAddress(8080), 0);
 
+    // Rotas da aplicação
     application.createContext("/", new Home());
     application.createContext("/io_task", new IOTask());
     application.createContext("/cpu_task", new CpuTask());
@@ -43,9 +43,16 @@ public class AppStart {
     application.createContext("/chain", new Chain());
     application.createContext("/error_test", new ErrorTest());
 
+    // Prometheus
+    HTTPServer prometheusServer = HTTPServer.builder()
+      .port(9464)
+      .buildAndStart();
+
     // Métricas da JVM
     // Estas métricas são geradas e expostas automaticamente no endpoint do Prometheus
     JvmMetrics.builder().register();
+
+    // Referência geral de tipos de métrica do Prometheus: https://tinyurl.com/prometheus-metric-types
 
     // Contador exemplar
     // Usados frequentemente para representar dados que progridem de forma aritmética/cumulativa
@@ -123,11 +130,11 @@ public class AppStart {
       .labelNames("otel.scope.name", "otel.scope.version", "library_mascot")
       .register();
 
-    scopeInfo.setLabelValues("my.instrumentation.lib", "100.3", "bear");
+    scopeInfo.setLabelValues("minha.dependência", "100.3", "bear");
 
     Info info = Info.builder()
       .name("java_runtime_info")
-      .help("Java runtime info")
+      .help("Informações do JRE")
       .labelNames("version", "vendor", "runtime")
       .register();
 
@@ -136,7 +143,7 @@ public class AppStart {
     String runtime = System.getProperty("java.runtime.name", "desconhecido");
 
     info.setLabelValues(version, vendor, runtime);
-    
+
     //=====================================================================================================
 
     // Conjunto de estados exemplar
@@ -148,23 +155,16 @@ public class AppStart {
     .states("feature1", "feature2")
     .register();
 
-    // Referência geral de tipos de métrica do Prometheus: https://tinyurl.com/prometheus-metric-types
-
     stateSet.labelValues("dev").setFalse("feature1");
     stateSet.labelValues("dev").setTrue("feature2");
 
     PrometheusRegistry prometheusRegistry = PrometheusRegistry.defaultRegistry;
 
-    // Prometheus
-    HTTPServer prometheusServer = HTTPServer.builder()
-      .port(9464)
-      .buildAndStart();
-
     // Exportador do Open Telemetry
-    OpenTelemetryExporter.builder()
-      .intervalSeconds(5)
-      .registry(prometheusRegistry)
-      .buildAndStart();
+    // OpenTelemetryExporter.builder()
+    //   .intervalSeconds(5)
+    //   .registry(prometheusRegistry)
+    //   .buildAndStart();
 
     // Inicialização da aplicação Java
     application.start();

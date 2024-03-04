@@ -7,20 +7,20 @@ services:
     build: .
     ports:
       - 8080:8080
-      - 9464:9464
     environment:
-      OTEL_SERVICE_NAME: app-java
-      # OTEL_RESOURCE_ATTRIBUTES: url=localhost:8080,ambiente=dev
+      OTEL_SERVICE_NAME: app
+      OTEL_RESOURCE_ATTRIBUTES: cliente=app-1,env=dev
       OTEL_TRACES_SAMPLER: always_on
-      # OTEL_TRACES_EXPORTER: otlp
+      OTEL_TRACES_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
-      # OTEL_LOGS_EXPORTER: otlp
-      # OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: http/protobuf
-      # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
-      # OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/write
-      # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
-      # OTEL_JAVAAGET_LOGGING: DEBUG
+      OTEL_LOGS_EXPORTER: none
+      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
+      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/write
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
+      OTEL_JAVAAGET_LOGGING: DEBUG
+      # OTEL_CONFIG_FILE: /app/sdk.yml
+    # volumes:
+    #   - ./docker/otel/sdk.yml:/app/sdk.yml
     depends_on:
       - prometheus
       - loki
@@ -68,7 +68,6 @@ services:
       # - ./docker/tempo/data:/var/tempo/
     ports:
       - 3200:3200
-      - 4317:4317
     depends_on:
       - loki
 
@@ -92,13 +91,13 @@ services:
   #     - ./docker/otel/config.yml:/otel/config.yml
   #   command: --config=/otel/config.yml
   #   ports:
-  #     # - 1888:1888 # pprof extension
+  #     - 1888:1888 # pprof extension
   #     - 8888:8888 # Prometheus metrics exposed by the collector
   #     - 8889:8889 # Prometheus exporter metrics
-  #     # - 13133:13133 # health_check extension
+  #     - 13133:13133 # health_check extension
   #     - 4317:4317 # OTLP gRPC receiver
   #     - 4318:4318 # OTLP http receiver
-  #     # - 55679:55679 # zpages extension
+  #     - 55679:55679 # zpages extension
   #   depends_on:
   #     - tempo
   #     - loki

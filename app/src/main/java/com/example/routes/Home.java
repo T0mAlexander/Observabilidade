@@ -39,7 +39,7 @@ public class Home implements HttpHandler {
     logger.error("Log de erro");
 
     String bodyContent = String.format("Olá %s!", name);
-    exchange.getResponseHeaders().set("Content-Type", "text/plain");
+    exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
     exchange.sendResponseHeaders(200, bodyContent.getBytes().length);
     try (OutputStream os = exchange.getResponseBody()) {
       os.write(bodyContent.getBytes());

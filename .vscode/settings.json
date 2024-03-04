@@ -3,6 +3,9 @@
   "java.configuration.updateBuildConfiguration": "automatic",
   "yaml.schemas": {
     "file:///home/tom/.vscode/extensions/docsmsft.docs-yaml-1.0.1/dist/toc.schema.json": "/toc\\.yml/i",
-    "https://json.schemastore.org/prometheus.json": "file:///home/tom/Documentos/Estudos/Observabilidade/configs/prometheus/config.yml"
+    "https://json.schemastore.org/prometheus.json": [
+      "file:///home/tom/Documentos/Estudos/Observabilidade/configs/prometheus/config.yml",
+      "file:///home/tom/Documentos/Estudos/Observabilidade/docker/prometheus/config.yml"
+    ]
   }
 }

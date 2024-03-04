@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Referências: https://logback.qos.ch/manual/layouts.html#WhatIsALayout? -->
+
 <configuration>
   <!-- Nome da aplicação -->
   <property name="APP_NAME" value="app-java" />
 
   <!-- Formatação dos logs -->
-  <property name="LOG_PATTERN" value="%d{dd/MM/yyyy} - %d{HH:mm:ss}  %-5level [THREAD] %thread  [LOGGER] %logger{36} - %message%n" />
+  <property name="LOG_PATTERN" value="%boldGreen(%d{dd/MM/yyyy}) - %boldGreen(%d{HH:mm:ss})  %highlight(%-5level) [THREAD] %boldRed(%thread)  [LOGGER] %boldMagenta(%logger{26}) - %yellow(%message) %n" />
 
   <!-- Expositor de logs no console -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

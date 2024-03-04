@@ -13,9 +13,7 @@ exporters:
 
   prometheusremotewrite:
     endpoint: http://prometheus:9090/api/v1/write
-    tls:
-      insecure: true
-    # add_metric_suffixes: true
+    add_metric_suffixes: true
 
   otlp:
     endpoint: http://tempo:4317
@@ -23,8 +21,12 @@ exporters:
       insecure: true
 
   loki:
-    endpoint: http://loki:3100/api/prom/push
-    # endpoint: http://localhost:3100/loki/api/v1/push
+    endpoint: http://loki:3100/loki/api/v1/push
+    tls:
+      insecure: true
+    default_labels_enabled:
+      exporter: true
+      job: true
 
 processors:
   batch:
@@ -40,7 +42,8 @@ service:
   extensions: [health_check, pprof, zpages]
   telemetry:
     logs:
-      level: INFO
+      level: DEBUG
+
   pipelines:
     metrics:
       receivers: [otlp]
@@ -49,8 +52,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug]
+      exporters: [otlp]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [loki]
+      exporters: [loki, debug]

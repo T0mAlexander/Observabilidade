@@ -25,3 +25,5 @@ flowchart LR
 
   D & C & E <---> Grafana
 ```
+
+Status final: não concluído

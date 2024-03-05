@@ -15,7 +15,7 @@ services:
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
       OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
-      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/write
+      # OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/write
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
       OTEL_JAVAAGET_LOGGING: DEBUG
       # OTEL_CONFIG_FILE: /app/sdk.yml

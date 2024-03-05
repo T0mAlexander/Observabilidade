@@ -26,7 +26,6 @@ import io.prometheus.metrics.core.metrics.Summary;
 import io.prometheus.metrics.exporter.httpserver.HTTPServer;
 // import io.prometheus.metrics.exporter.opentelemetry.OpenTelemetryExporter;
 import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
-import io.prometheus.metrics.model.registry.PrometheusRegistry;
 import io.prometheus.metrics.model.snapshots.Unit;
 
 public class AppStart {
@@ -157,8 +156,6 @@ public class AppStart {
 
     stateSet.labelValues("dev").setFalse("feature1");
     stateSet.labelValues("dev").setTrue("feature2");
-
-    PrometheusRegistry prometheusRegistry = PrometheusRegistry.defaultRegistry;
 
     // Exportador do Open Telemetry
     // OpenTelemetryExporter.builder()

@@ -11,12 +11,12 @@ services:
       OTEL_SERVICE_NAME: app
       OTEL_RESOURCE_ATTRIBUTES: cliente=app-1,env=dev
       OTEL_TRACES_SAMPLER: always_on
-      OTEL_TRACES_EXPORTER: none
+      # OTEL_TRACES_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
-      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
+      # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
       # OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/write
-      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
+      # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
       OTEL_JAVAAGET_LOGGING: DEBUG
       # OTEL_CONFIG_FILE: /app/sdk.yml
     # volumes:
@@ -34,13 +34,40 @@ services:
       - 9090:9090
     volumes:
       - ./docker/prometheus/config.yml:/prometheus/config.yml
+      - ./docker/alertmanager/alerts/certs.yml:/prometheus/alerts/certs.yml
       # - ./docker/prometheus/data/:/prometheus/data/
     command:
       - --config.file=/prometheus/config.yml
       - --enable-feature=exemplar-storage
       - --enable-feature=otlp-write-receive
+      - --storage.tsdb.path=/prometheus
     depends_on:
       - loki
+
+  alertmanager:
+    container_name: alert-manager
+    image: prom/alertmanager:v0.27.0
+    ports:
+      - 9093:9093
+    volumes:
+      - ./docker/alertmanager/config.yml:/alertmanager/alertmanager.yml
+    command:
+      - --config.file=/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+      - --log.level=debug
+    depends_on:
+      - prometheus
+
+  blackbox-exporter:
+    container_name: blackbox-exporter
+    image: prom/blackbox-exporter:v0.24.0
+    ports: 
+      - 9115:9115
+    volumes:
+      - ./docker/prometheus/blackbox/config.yml:/blackbox/config.yml
+    command: --config.file=/blackbox/config.yml
+    depends_on:
+      - prometheus
 
   loki:
     container_name: loki

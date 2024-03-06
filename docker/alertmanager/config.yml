@@ -1,0 +1,27 @@
+route:
+  receiver: default
+  group_by:
+    - alertname
+  group_wait: 15s
+  group_interval: 15s
+  repeat_interval: 1m
+
+  routes:
+    - receiver: discord
+      match:
+        team: Operações
+
+receivers:
+  - name: default
+    discord_configs:
+      - send_resolved: false
+        webhook_url: # URL
+        title: '{{ template "discord.default.title" . }}'
+        message: '{{ template "discord.default.message" . }}'
+
+  - name: discord
+    discord_configs:
+      - send_resolved: false
+        webhook_url: # URL
+        title: '{{ template "discord.default.title" . }}'
+        message: '{{ template "discord.default.message" . }}'

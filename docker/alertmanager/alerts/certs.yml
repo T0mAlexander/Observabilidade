@@ -1,12 +1,9 @@
 groups:
-  - name: expiration
+  - name: certs-expiration
     rules:
-      - alert: Expiração de Certificado
-        expr: sum by (instance, path) (probe_ssl_earliest_cert_expiry - time()) < 86400 * 7
+      - alert: Expiramento de Certificados
+        expr: sum by (instance, alias) (probe_ssl_earliest_cert_expiry - time()) > 86400 * 7
         for: 10s
         labels:
-          team: Operações
-          severity: warning
-        annotations:
-          title: Expiramento de certificado
-          description: Um certificado SSL está prestes a expirar em 1 semana
+          departamento: Operações
+          prioridade: Crítica

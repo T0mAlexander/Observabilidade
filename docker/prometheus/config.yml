@@ -45,7 +45,13 @@ scrape_configs:
       module: [http_2xx]
     static_configs:
       - targets:
-        - https://google.com.br
+          - https://google.com.br
+        labels:
+          alias: Google
+      - targets:
+          - https://amazon.com.br
+        labels:
+          alias: Amazon
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

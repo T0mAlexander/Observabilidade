@@ -2,43 +2,43 @@ route:
   receiver: default
   group_by:
     - alertname
-  group_wait: 5s
-  group_interval: 3s
-  repeat_interval: 3s
 
   routes:
     - receiver: discord_certs_expiration
       match:
         alertname: Expiramento de Certificados
+      group_wait: 5s
+      group_interval: 3s
+      repeat_interval: 3s
 
 receivers:
   - name: default
     discord_configs:
       # - send_resolved: false
-        webhook_url: # URL
+        - webhook_url: # URL
 
   - name: discord_certs_expiration
     discord_configs:
       # - send_resolved: false
-        webhook_url: # URL
-        title: |
-          {{- if eq (len .Alerts.Firing) 1 }}
-          Expiramento de Certificado TLS
-          {{- else }}
-          Expiramento de Certificados TLS
-          {{- end }}
-        message: |
-          **Prioridade**: {{ .CommonLabels.prioridade | toUpper }} :rotating_light:
-          **Departamento**: {{ .CommonLabels.departamento }} :gear:
-          {{ "" }}
-          {{- if eq (len .Alerts.Firing) 1 }}
-          **Mensagem**: o seguinte certificado irá expirar em **7 dias**:
-          {{- else }}
-          **Mensagem**: os seguintes certificados irão expirar em **7 dias**:
-          {{- end }}
-          {{ "" }}
-          {{- range .Alerts.Firing }}
-          - [{{ .Labels.alias }}]({{ .Labels.instance }})
-          {{- end }}
-          {{ "" }}
-          **Mensagem gerada automaticamente pelo Alertmanager**
+        - webhook_url: # URL
+          title: |
+            {{- if eq (len .Alerts.Firing) 1 }}
+            Expiramento de Certificado TLS
+            {{- else }}
+            Expiramento de Certificados TLS
+            {{- end }}
+          message: |
+            **Prioridade**: {{ .CommonLabels.prioridade | toUpper }} :rotating_light:
+            **Departamento**: {{ .CommonLabels.departamento }} :gear:
+            {{ "" }}
+            {{- if eq (len .Alerts.Firing) 1 }}
+            **Mensagem**: o seguinte certificado irá expirar em **7 dias**:
+            {{- else }}
+            **Mensagem**: os seguintes certificados irão expirar em **7 dias**:
+            {{- end }}
+            {{ "" }}
+            {{- range .Alerts.Firing }}
+            - [{{ .Labels.alias }}]({{ .Labels.instance }})
+            {{- end }}
+            {{ "" }}
+            **Mensagem gerada automaticamente pelo Alertmanager**

@@ -20,7 +20,6 @@ scrape_configs:
         - localhost:9090
         - alertmanager:9093
 
-
   - job_name: app
     scrape_interval: 5s
     metrics_path: /metrics

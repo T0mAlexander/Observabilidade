@@ -7,29 +7,41 @@ services:
     build: .
     ports:
       - 8080:8080
-    environment:
-      OTEL_SERVICE_NAME: app
-      OTEL_RESOURCE_ATTRIBUTES: cliente=app-1,env=dev
-      OTEL_TRACES_SAMPLER: always_on
-      # OTEL_TRACES_EXPORTER: none
-      OTEL_METRICS_EXPORTER: none
-      OTEL_LOGS_EXPORTER: none
-      # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
-      # OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/write
-      # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
-      OTEL_JAVAAGET_LOGGING: DEBUG
-      # OTEL_CONFIG_FILE: /app/sdk.yml
-    # volumes:
-    #   - ./docker/otel/sdk.yml:/app/sdk.yml
+      - 9464:9464
+    volumes:
+      - ./ocelot.yml:/app/config/ocelot.yml
+      - ./app.log:/app-java.log
     depends_on:
       - prometheus
       - loki
       - tempo
+      - postgresql
+      - postgres-exporter
+
+  postgresql:
+    container_name: postgresql
+    image: bitnami/postgresql:16
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL_USERNAME=java
+      - POSTGRESQL_PASSWORD=123
+      - POSTGRESQL_DATABASE=app
+
+  postgres-exporter:
+    container_name: postgres-exporter
+    image: bitnami/postgres-exporter:0.15.0
+    ports:
+      - 9187:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://java:123@postgresql:5432/app?sslmode=disable
+    depends_on:
+      - postgresql
 
   prometheus:
     container_name: prometheus
     user: root
-    image: prom/prometheus:v2.49.1
+    image: prom/prometheus:v2.50.1
     ports:
       - 9090:9090
     volumes:
@@ -73,12 +85,32 @@ services:
     container_name: loki
     image: grafana/loki:2.9.5
     user: root
-    command: -config.file=/etc/loki/config.yml
+    command: 
+      - -config.file=/etc/loki/config.yml
+      - -print-config-stderr=true
     volumes:
       - ./docker/loki/config.yml:/etc/loki/config.yml
+      - ./loki.log:/etc/loki/container.log
       # - ./docker/loki/data:/loki/wal/
     ports:
       - 3100:3100
+    depends_on:
+      - promtail
+    logging:
+      driver: journald
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:2.9.5 
+    volumes:
+      - ./app.log/:/app/app.log
+      - ./docker/loki/promtail/config.yml:/promtail/config.yml
+    command:
+      - -config.file=/promtail/config.yml
+      - -print-config-stderr=true
+      - -config.expand-env=true
+    ports:
+      - 3400:3400
 
   tempo:
     container_name: tempo
@@ -111,21 +143,15 @@ services:
       - prometheus
       - tempo
 
-  # otel-collector:
-  #   container_name: otel-collector
-  #   image: otel/opentelemetry-collector-contrib:0.95.0
-  #   volumes:
-  #     - ./docker/otel/config.yml:/otel/config.yml
-  #   command: --config=/otel/config.yml
-  #   ports:
-  #     - 1888:1888 # pprof extension
-  #     - 8888:8888 # Prometheus metrics exposed by the collector
-  #     - 8889:8889 # Prometheus exporter metrics
-  #     - 13133:13133 # health_check extension
-  #     - 4317:4317 # OTLP gRPC receiver
-  #     - 4318:4318 # OTLP http receiver
-  #     - 55679:55679 # zpages extension
-  #   depends_on:
-  #     - tempo
-  #     - loki
-  #     - prometheus
+  otel-collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector-contrib:0.95.0
+    volumes:
+      - ./docker/otel/config.yml:/otel/config.yml
+    command: --config=/otel/config.yml
+    ports:
+      - 4317:4317
+    depends_on:
+      - tempo
+      - loki
+      - prometheus

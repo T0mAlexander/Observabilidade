@@ -1,0 +1,15 @@
+inspectit:
+  exporters:
+    metrics:
+      prometheus:
+        enabled: true
+        port: 9464
+
+    tracing:
+      otlp:
+        endpoint: otel-collector:4317
+
+  tracing:
+    log-correlation:
+      trace-id-mdc-injection:
+        enabled: true

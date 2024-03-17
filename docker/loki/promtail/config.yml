@@ -1,0 +1,21 @@
+server:
+  http_listen_port: 3400
+  grpc_listen_port: 0
+
+# log_level: debug
+
+positions:
+  filename: /promtail/positions.yml
+  sync_period: 5s
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: app-java
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: app
+          __path__: /app/app.log

@@ -4,15 +4,16 @@ server:
   http_listen_port: 3100
 
 common:
+  ring:
+    instance_addr: localhost
+    kvstore:
+      store: inmemory
+  replication_factor: 1
   path_prefix: /loki
   storage:
     filesystem:
       chunks_directory: /loki/chunks
       rules_directory: /loki/rules
-  replication_factor: 1
-  ring:
-    kvstore:
-      store: inmemory
 
 schema_config:
   configs:
@@ -24,5 +25,5 @@ schema_config:
         prefix: index_
         period: 24h
 
-# ruler:
-#   alertmanager_url: http://alert-manager:9093
+ruler:
+  alertmanager_url: http://alertmanager:9093

@@ -25,7 +25,7 @@ import io.prometheus.metrics.core.metrics.StateSet;
 import io.prometheus.metrics.core.metrics.Summary;
 import io.prometheus.metrics.exporter.httpserver.HTTPServer;
 // import io.prometheus.metrics.exporter.opentelemetry.OpenTelemetryExporter;
-import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
+// import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import io.prometheus.metrics.model.snapshots.Unit;
 
 public class AppStart {
@@ -49,7 +49,7 @@ public class AppStart {
 
     // Métricas da JVM
     // Estas métricas são geradas e expostas automaticamente no endpoint do Prometheus
-    JvmMetrics.builder().register();
+    // JvmMetrics.builder().register();
 
     // Referência geral de tipos de métrica do Prometheus: https://tinyurl.com/prometheus-metric-types
 
@@ -156,12 +156,6 @@ public class AppStart {
 
     stateSet.labelValues("dev").setFalse("feature1");
     stateSet.labelValues("dev").setTrue("feature2");
-
-    // Exportador do Open Telemetry
-    // OpenTelemetryExporter.builder()
-    //   .intervalSeconds(5)
-    //   .registry(prometheusRegistry)
-    //   .buildAndStart();
 
     // Inicialização da aplicação Java
     application.start();

@@ -14,16 +14,8 @@ application {
 
 tasks.withType<JavaExec> {
   jvmArgs(
-    "-javaagent:../tools/otel-agent.jar",
-    "-Dotel.service.name=app-java",
-    "-Dotel.logs.exporter=otlp",
-    "-Dotel.metrics.exporter=otlp",
-    "-Dotel.traces.exporter=otlp",
-    "-Dotel.traces.sampler=always_on"
-    // "-Dotel.exporter.otlp.metrics.endpoint=http://localhost:9090/api/v1/write",
-    // "-Dotel.exporter.otlp.logs.endpoint=http://localhost:3100/api/prom/push",
-    // "-Dotel.exporter.otlp.traces.endpoint=http://localhost:4317",
-    // "-Dotel.exporter.otlp.endpoint=http://localhost:4317",
+    "-javaagent:../tools/ocelot-agent-2.6.4.jar",
+    "-Dinspectit.config.file-based.path=/ocelot.yml"
   )
 }
 
@@ -41,7 +33,6 @@ dependencies {
   implementation("io.prometheus:prometheus-metrics-core:1.1.0")
   implementation("io.prometheus:prometheus-metrics-exporter-httpserver:1.1.0")
   implementation("io.prometheus:prometheus-metrics-instrumentation-jvm:1.1.0")
-  implementation("io.prometheus:prometheus-metrics-exporter-opentelemetry:1.1.0")
 
   // Logs
   implementation("org.slf4j:slf4j-api:2.0.12")

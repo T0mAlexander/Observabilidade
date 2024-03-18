@@ -24,15 +24,17 @@ import io.prometheus.metrics.core.metrics.Info;
 import io.prometheus.metrics.core.metrics.StateSet;
 import io.prometheus.metrics.core.metrics.Summary;
 import io.prometheus.metrics.exporter.httpserver.HTTPServer;
-// import io.prometheus.metrics.exporter.opentelemetry.OpenTelemetryExporter;
 import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import io.prometheus.metrics.model.snapshots.Unit;
+import io.prometheus.metrics.tracer.otel_agent.OpenTelemetryAgentSpanContext;
 
 public class AppStart {
   public static void main(String[] args) throws IOException, Exception {
     // Provedor de logs
     Logger logger = LoggerFactory.getLogger(AppStart.class);
     HttpServer application = HttpServer.create(new InetSocketAddress(8080), 0);
+
+  OpenTelemetryAgentSpanContext.isAvailable();
 
     // Rotas da aplicação
     application.createContext("/", new Home());

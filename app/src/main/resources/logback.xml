@@ -7,7 +7,7 @@
   <property name="APP_NAME" value="app-java" />
 
   <!-- Formatação dos logs -->
-  <property name="LOG_PATTERN" value="%boldGreen(%d{dd/MM/yyyy}) - %boldGreen(%d{HH:mm:ss})  %highlight(%-5level) [THREAD] %boldRed(%thread)  [LOGGER] %boldMagenta(%logger{26}) - %yellow(%message) %n" />
+  <property name="LOG_PATTERN" value="%boldGreen(%d{dd/MM/yyyy}) - %boldGreen(%d{HH:mm:ss})  %highlight(%-5level) [THREAD] %boldRed(%thread)  [LOGGER] %boldMagenta(%logger{26}) - %message %n" />
 
   <!-- Expositor de logs no console -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

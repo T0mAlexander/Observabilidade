@@ -1,0 +1,36 @@
+server:
+  http_listen_port: 3400
+  grpc_listen_port: 0
+# log_level: debug
+
+positions:
+  filename: /promtail/positions.yml
+  sync_period: 5s
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # - job_name: log
+  #   static_configs:
+  #     - targets:
+  #         - localhost
+  #       labels:
+  #         cliente: app
+  #         ambiente: homologação
+  #         __path__: /promtail/app.log
+
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          - name: label
+            values: 
+              - logging=promtail
+    relabel_configs:
+      - source_labels: [__meta_docker_container_name] # Propriedade extraída do Docker
+        regex: '/(.*)'
+        target_label: cliente # Nome do rotulo no Grafana
+      # - source_labels: ['__meta_docker_container_log_stream']
+      #   target_label: logstream

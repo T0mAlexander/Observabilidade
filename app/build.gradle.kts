@@ -42,6 +42,7 @@ dependencies {
   implementation("io.prometheus:prometheus-metrics-exporter-httpserver:1.1.0")
   implementation("io.prometheus:prometheus-metrics-instrumentation-jvm:1.1.0")
   implementation("io.prometheus:prometheus-metrics-exporter-opentelemetry:1.1.0")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.12.4")
 
   // Logs
   implementation("org.slf4j:slf4j-api:2.0.12")

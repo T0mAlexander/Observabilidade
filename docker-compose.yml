@@ -13,6 +13,31 @@ x-logging: &loki
           expression: '^(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}.\d{3}) (?P<message>(?s:.*))$$'
 
 services:
+  app:
+    container_name: app
+    build: .
+    ports:
+      - 8080:8080
+      - 9464:9464
+    environment:
+      OTEL_SERVICE_NAME: app
+      MANAGEMENT_METRICS_TAGS_APPLICATION: app
+      OTEL_RESOURCE_ATTRIBUTES: compose_service=app
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
+      OTEL_TRACES_SAMPLER: always_on
+      # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
+      # OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/otlp/v1/metrics
+      # OTEL_JAVAAGENT_LOGGING: application
+      # OTEL_JAVAAGENT_DEBUG: true
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+    labels:
+      logging: promtail
+
   prometheus:
     container_name: prometheus
     user: root
@@ -84,6 +109,24 @@ services:
     ports:
       - 3400:3400
 
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:2.4.0
+    user: root
+    command:
+      # - --config.file=/etc/tempo/config.yml
+      - --target=all
+      - --storage.trace.backend=local
+      - --storage.trace.local.path=/etc/tempo/cluster
+      - --auth.enabled=false
+    volumes:
+      - ./docker/tempo/config.yml:/etc/tempo/config.yml
+      # - ./docker/tempo/data:/var/tempo/
+    ports:
+      - 4317:4317
+    depends_on:
+      - loki
+
   grafana:
     container_name: grafana
     image: grafana/grafana:10.3.3
@@ -95,45 +138,4 @@ services:
     depends_on:
       - loki
       - prometheus
-      - jaeger
-
-  app:
-    container_name: app
-    build: .
-    ports:
-      - 8080:8080
-      - 9464:9464
-    environment:
-      OTEL_SERVICE_NAME: app
-      OTEL_LOGS_EXPORTER: none
-      OTEL_METRICS_EXPORTER: none
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
-      # OTEL_JAVAAGENT_LOGGING: application
-    depends_on:
-      # - prometheus
-      # - loki
-      - jaeger
-    labels:
-      logging: promtail
-
-  jaeger:
-    container_name: jaeger
-    image: jaegertracing/all-in-one:1.55
-    environment:
-      COLLECTOR_OTLP_ENABLED: true
-    ports:
-      - 4000:16686
-      - 4317:4317
-    depends_on:
-      - otel-collector
-
-  otel-collector:
-    container_name: otel-collector
-    image: otel/opentelemetry-collector-contrib:0.96.0
-    volumes:
-      - ./docker/otel/config.yml:/otel/config.yml
-    command: "--config=/otel/config.yml"
-    depends_on:
-      - loki
-      - prometheus
+      - tempo

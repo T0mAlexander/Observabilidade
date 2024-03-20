@@ -1,4 +1,5 @@
 FROM gradle:8.6-alpine AS build
+
 WORKDIR /app
 COPY /app .
 RUN gradle clean shadowJar

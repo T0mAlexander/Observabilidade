@@ -1,17 +1,6 @@
 version: '3.9'
 name: observabilidade
 
-x-logging: &loki
-  driver: loki
-  options:
-    loki-url: http://localhost:3100/loki/api/v1/push
-    loki-pipeline-stages: |
-      - multiline:
-          firstline: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}'
-          max_wait_time: 3s
-      - regex:
-          expression: '^(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}.\d{3}) (?P<message>(?s:.*))$$'
-
 services:
   app:
     container_name: app
@@ -21,22 +10,19 @@ services:
       - 9464:9464
     environment:
       OTEL_SERVICE_NAME: app
-      MANAGEMENT_METRICS_TAGS_APPLICATION: app
-      OTEL_RESOURCE_ATTRIBUTES: compose_service=app
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
-      OTEL_TRACES_SAMPLER: always_on
-      # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
-      # OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://prometheus:9090/api/v1/otlp/v1/metrics
-      # OTEL_JAVAAGENT_LOGGING: application
-      # OTEL_JAVAAGENT_DEBUG: true
-    depends_on:
-      - prometheus
-      - loki
-      - tempo
-    labels:
-      logging: promtail
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_EXPORTER_TRACES_ENDPOINT: http://jaeger:4317
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:1.55
+    ports:
+      - 4000:16686
+      - 4317:4317
+    environment:
+      OTLP_COLLECTOR_ENABLED: true
 
   prometheus:
     container_name: prometheus
@@ -109,24 +95,6 @@ services:
     ports:
       - 3400:3400
 
-  tempo:
-    container_name: tempo
-    image: grafana/tempo:2.4.0
-    user: root
-    command:
-      # - --config.file=/etc/tempo/config.yml
-      - --target=all
-      - --storage.trace.backend=local
-      - --storage.trace.local.path=/etc/tempo/cluster
-      - --auth.enabled=false
-    volumes:
-      - ./docker/tempo/config.yml:/etc/tempo/config.yml
-      # - ./docker/tempo/data:/var/tempo/
-    ports:
-      - 4317:4317
-    depends_on:
-      - loki
-
   grafana:
     container_name: grafana
     image: grafana/grafana:10.3.3
@@ -138,4 +106,4 @@ services:
     depends_on:
       - loki
       - prometheus
-      - tempo
+      - jaeger

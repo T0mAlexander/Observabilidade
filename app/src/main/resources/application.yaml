@@ -11,13 +11,13 @@ management:
       percentiles-histogram:
         http:
           server:
-            requests: 'true'
+            requests: true
 
 logging:
   pattern:
-    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
+    level: "%boldGreen(%d{dd/MM/yyyy}) - %boldGreen(%d{HH:mm:ss})  %highlight(%-5level) [THREAD] %boldRed(%thread)  [LOGGER] %boldMagenta(%logger{26})  [TRACE] %yellow(%mdc{trace_id})  [SPAN] %yellow(%mdc{span_id})  [FLAGS] %yellow(%mdc{trace_flags}) - %message %n"
   level:
-    com.example.app: DEBUG
+    com.example.app: TRACE
 
 spring:
   datasource:

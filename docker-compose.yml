@@ -1,10 +1,10 @@
 version: '3.9'
-name: java-observabilidade
+name: spring-observabilidade
 
 x-logging: &default-logging
   driver: loki
   options:
-    loki-url: http://localhost:3100/api/prom/push
+    loki-url: http://localhost:3100/loki/api/v1/push
     loki-pipeline-stages: |
       - multiline:
           firstline: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}'
@@ -99,15 +99,15 @@ services:
     container_name: app-a
     build: ./app/
     environment:
-      - OTEL_SERVICE_NAME=app-a # Nome do serviço para o Span
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # Envia rastreamentos ao Grafana Tempo
-      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-a # Nome customizado para o Grafana Tempo e Loki
-      - OTEL_METRICS_EXPORTER=none # Desabilitado exportador de métricas
-      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-a # Sobrescrever o valor padrão de "management.metrics.tags.application" localizado em "app/src/main/resources/application.properties"
-      - TARGET_ONE_HOST=app-b
-      - TARGET_TWO_HOST=app-c
-      # - OTEL_JAVAAGENT_DEBUG=true
-      - OTEL_JAVAAGENT_LOGGING=application
+      OTEL_SERVICE_NAME: app-a # Nome do serviço para o Span
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317 # Envia rastreamentos ao Grafana Tempo
+      OTEL_RESOURCE_ATTRIBUTES: compose_service=app-a # Nome customizado para o Grafana Tempo e Loki
+      OTEL_METRICS_EXPORTER: none # Desabilitado exportador de métricas
+      OTEL_LOGS_EXPORTER: none # Desabilitado exportador de logs da aplicação
+      MANAGEMENT_METRICS_TAGS_APPLICATION: app-a # Sobrescrever o valor padrão de "management.metrics.tags.application" localizado em "app/src/main/resources/application.properties"
+      TARGET_ONE_HOST: app-b
+      TARGET_TWO_HOST: app-c
+      OTEL_JAVAAGENT_LOGGING: application
     depends_on:
       - postgres
     ports:
@@ -118,15 +118,15 @@ services:
     container_name: app-b
     build: ./app/
     environment:
-      - OTEL_SERVICE_NAME=app-b
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
-      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-b
-      - OTEL_METRICS_EXPORTER=none
-      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-b
-      - TARGET_ONE_HOST=app-b
-      - TARGET_TWO_HOST=app-c
-      # - OTEL_JAVAAGENT_DEBUG=true
-      - OTEL_JAVAAGENT_LOGGING=application
+      OTEL_SERVICE_NAME: app-b
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
+      OTEL_RESOURCE_ATTRIBUTES: compose_service=app-b
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+      MANAGEMENT_METRICS_TAGS_APPLICATION: app-b
+      TARGET_ONE_HOST: app-b
+      TARGET_TWO_HOST: app-c
+      OTEL_JAVAAGENT_LOGGING: application
     depends_on:
       - postgres
     ports:
@@ -137,15 +137,15 @@ services:
     container_name: app-c
     build: ./app/
     environment:
-      - OTEL_SERVICE_NAME=app-c
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
-      - OTEL_RESOURCE_ATTRIBUTES=compose_service=app-c
-      - OTEL_METRICS_EXPORTER=none
-      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-c
-      - TARGET_ONE_HOST=app-b
-      - TARGET_TWO_HOST=app-c
-      # - OTEL_JAVAAGENT_DEBUG=true
-      - OTEL_JAVAAGENT_LOGGING=application
+      OTEL_SERVICE_NAME: app-c
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://tempo:4317
+      OTEL_RESOURCE_ATTRIBUTES: compose_service=app-c
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+      MANAGEMENT_METRICS_TAGS_APPLICATION: app-c
+      TARGET_ONE_HOST: app-b
+      TARGET_TWO_HOST: app-c
+      OTEL_JAVAAGENT_LOGGING: application
     depends_on:
       - postgres
     ports:

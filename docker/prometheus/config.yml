@@ -23,7 +23,7 @@ scrape_configs:
   - job_name: wildfly
     static_configs:
       - targets:
-        - wildfly:9990
+        - wildfly:9991
 
   - job_name: app
     scrape_interval: 5s

@@ -1,6 +1,6 @@
 plugins {
-  java
   application
+  id("war")
   id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -19,6 +19,8 @@ tasks.withType<Jar> {
 }
 
 dependencies {
+  compileOnly("javax.enterprise:cdi-api:2.0")
+
   // Prometheus
   implementation("io.prometheus:prometheus-metrics-core:1.1.0")
   implementation("io.prometheus:prometheus-metrics-exporter-httpserver:1.1.0")

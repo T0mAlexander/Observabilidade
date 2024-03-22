@@ -1,29 +1,47 @@
-version: '3.9'
+version: '3.8'
 name: observabilidade
 
 services:
-  app:
-    container_name: app
+  wildfly:
+    container_name: wildfly
     build: .
     ports:
       - 8080:8080
-      - 9464:9464
+      - 9990:9990 # Porta do painel de admin do Wildfly
+      - 9991:9991 # Porta do Prometheus JMX Exporter
     environment:
-      OTEL_SERVICE_NAME: app
-      OTEL_METRICS_EXPORTER: none
-      OTEL_LOGS_EXPORTER: none
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_EXPORTER_TRACES_ENDPOINT: http://jaeger:4317
-      OTEL_JAVAAGENT_LOGGING: application
+      TZ: America/Sao_Paulo
+    volumes:
+      - ./docker/wildfly/standalone.xml:/opt/jboss/wildfly/standalone/configuration/standalone.xml
+      - ./docker/wildfly/standalone.conf:/opt/jboss/wildfly/bin/standalone.conf
+      - ./docker/wildfly/jmx-exporter.yml:/jmx-exporter.yml
 
-  jaeger:
-    container_name: jaeger
-    image: jaegertracing/all-in-one:1.55
+  # jaeger:
+  #   container_name: jaeger
+  #   image: jaegertracing/all-in-one:1.55
+  #   ports:
+  #     - 4000:16686
+  #     - 4317:4317
+  #   environment:
+  #     OTLP_COLLECTOR_ENABLED: true
+
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:2.4.0
+    user: root
+    command:
+      - --config.file=/etc/tempo/config.yml
+      - --target=all
+      - --storage.trace.backend=local
+      - --storage.trace.local.path=/etc/tempo/cluster
+      - --auth.enabled=false
+    volumes:
+      - ./docker/tempo/config.yml:/etc/tempo/config.yml
+      # - ./docker/tempo/data:/var/tempo/
     ports:
-      - 4000:16686
       - 4317:4317
-    environment:
-      OTLP_COLLECTOR_ENABLED: true
+    depends_on:
+      - grafana
 
   prometheus:
     container_name: prometheus
@@ -40,8 +58,8 @@ services:
       - --enable-feature=exemplar-storage
       - --enable-feature=otlp-write-receiver
       - --storage.tsdb.path=/prometheus
-    depends_on:
-      - loki
+    # depends_on:
+    #   - loki
 
   alertmanager:
     container_name: alert-manager
@@ -105,6 +123,5 @@ services:
       - ./docker/grafana/datasources.yml:/usr/share/grafana/conf/provisioning/datasources/datasources.yml
       - ./docker/grafana/dashboards:/usr/share/grafana/dashboards
     depends_on:
-      - loki
+      # - loki
       - prometheus
-      - jaeger

@@ -14,7 +14,23 @@ services:
     volumes:
       - ./docker/wildfly/standalone.xml:/opt/jboss/wildfly/standalone/configuration/standalone.xml
       - ./docker/wildfly/standalone.conf:/opt/jboss/wildfly/bin/standalone.conf
-      - ./docker/wildfly/jmx-exporter.yml:/jmx-exporter.yml
+      - ./docker/prometheus/jmx-exporter.yml:/jmx-exporter.yml
+
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter:v1.7.0
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro,rslave
+    restart: unless-stopped
+    cap_add:
+      - SYS_TIME
+    expose:
+      - 9100
+    depends_on:
+      - prometheus
+      - grafana
 
   # jaeger:
   #   container_name: jaeger
@@ -58,6 +74,9 @@ services:
       - --enable-feature=exemplar-storage
       - --enable-feature=otlp-write-receiver
       - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.enable-lifecycle
     # depends_on:
     #   - loki
 
@@ -116,7 +135,7 @@ services:
 
   grafana:
     container_name: grafana
-    image: grafana/grafana:10.3.3
+    image: grafana/grafana:10.3.5
     ports:
       - 3000:3000
     volumes:

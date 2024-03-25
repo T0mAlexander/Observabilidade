@@ -26,8 +26,8 @@ services:
     restart: unless-stopped
     cap_add:
       - SYS_TIME
-    expose:
-      - 9100
+    ports:
+      - 9100:9100
     depends_on:
       - prometheus
       - grafana
